@@ -67,5 +67,5 @@ const Auth = () => {
         </div>
     )
 }
-
+    
 export default Auth
