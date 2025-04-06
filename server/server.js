@@ -27,10 +27,6 @@ const server = app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
 })
 
-app.get("/", (req, res) => {
-    res.send("hello")
-})
-
 mongoose.connect(databaseUrl).then(() => {
     console.log("database is connected")
 }).catch((err) => {
