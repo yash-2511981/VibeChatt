@@ -1,10 +1,10 @@
 import User from '../model/UserModel.js'
 import jwt from 'jsonwebtoken'
 
-const validateTill = 3 * 24 * 60 * 60 * 1000;
+const validateTill = 3 * 24 * 60 * 60*1000;
 
 const createToken = (email, userId) => {
-    return jwt.sign((email, userId), process.env.JWT_KEY, { expiresIn: validateTill })
+    return jwt.sign({email, userId}, process.env.JWT_KEY, { expiresIn : validateTill })
 }
 
 export const signUp = async (req, res, next) => {
@@ -14,8 +14,9 @@ export const signUp = async (req, res, next) => {
         if (!email || !password) return res.status(400).send("Email and Password is required");
 
         const user = await User.create({ email, password });
+        console.log(user);
 
-        res.cookie("jwt", createToken(email, user.id), {
+        res.cookie("jwt", createToken(email, user._id), {
             validateTill,
             secure: true,
             sameSite: "None"

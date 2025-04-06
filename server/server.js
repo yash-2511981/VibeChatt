@@ -21,7 +21,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
-app.use("/auth",router)
+app.use("/api/auth", router)
 
 const server = app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)

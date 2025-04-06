@@ -3,8 +3,11 @@ import Victory from '@/assets/victory.svg'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { apiClient } from '@/lib/api-client'
+import { SIGNUP_ROUTE } from '@/utils/constants'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 
 const Auth = () => {
@@ -12,12 +15,50 @@ const Auth = () => {
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
 
-    const handelLogin = async () => {
+    //validation before sign up process
+    const validateSignUp = () => {
+        if (!email.length) {
+            toast.error("Email is required")
+            return false;
+        }
+        if (!password.length) {
+            toast.error("Password is required")
+            return false;
+        }
 
+        if (password !== confirmPassword) {
+            toast.error("password and confirm password should be same")
+            return false;
+        }
+
+        return true;
+    }
+
+    const validateLogin = () => {
+        if (!email.length) {
+            toast.error("Email is required")
+            return false;
+        }
+        if (!password.length) {
+            toast.error("Password is required")
+            return false;
+        }
+        return true;
+    }
+
+
+    //handle login and sign up process
+    const handelLogin = async () => {
+        if (validateLogin()) {
+
+        }
     }
 
     const handleSignUp = async () => {
-
+        if (validateSignUp()) {
+            const response = await apiClient.post(SIGNUP_ROUTE, { email, password })
+            console.log(response)
+        }
     }
 
     return (
@@ -35,6 +76,8 @@ const Auth = () => {
                             Fill in the details to get started with a best chat app
                         </p>
                     </div>
+
+                    {/* Login and SignUp Content*/}
                     <div className="flex items-center justify-center w-full">
                         <Tabs className="w-3/4">
                             <TabsList className="bg-transparent rounded-none w-full">
@@ -61,11 +104,11 @@ const Auth = () => {
                     </div>
                 </div>
                 <div className="hidden xl:flex justify-center items-center">
-                    <img src={Background} alt="Background Login" className='h-[500px]'/>
+                    <img src={Background} alt="Background Login" className='h-[500px]' />
                 </div>
             </div>
         </div>
     )
 }
-    
+
 export default Auth
