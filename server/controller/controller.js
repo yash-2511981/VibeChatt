@@ -2,10 +2,10 @@ import { compare } from 'bcrypt';
 import User from '../model/UserModel.js'
 import jwt from 'jsonwebtoken'
 
-const validateTill = 3 * 24 * 60 * 60*1000;
+const validateTill = 3 * 24 * 60 * 60 * 1000;
 
 const createToken = (email, userId) => {
-    return jwt.sign({email, userId}, process.env.JWT_KEY, { expiresIn : validateTill })
+    return jwt.sign({ email, userId }, process.env.JWT_KEY, { expiresIn: validateTill })
 }
 
 export const signUp = async (req, res, next) => {
@@ -15,7 +15,6 @@ export const signUp = async (req, res, next) => {
         if (!email || !password) return res.status(400).send("Email and Password is required");
 
         const user = await User.create({ email, password });
-        console.log(user);
 
         res.cookie("jwt", createToken(email, user._id), {
             validateTill,
@@ -36,35 +35,59 @@ export const signUp = async (req, res, next) => {
     }
 }
 
-export const login =async (req,res) =>{
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
         if (!email || !password) return res.status(400).send("Email and Password is required");
 
-        const user = await User.findOne({email});
-        if(!user) return res.status(404).send("user is not found")
+        const user = await User.findOne({ email });
+        if (!user) return res.status(404).send("user is not found")
 
-        const auth = await compare(password,user.password);
+        const auth = await compare(password, user.password);
 
-        if(!auth) return res.status(404).send("password is incorrect")
-            
+        if (!auth) return res.status(404).send("password is incorrect")
+
         res.cookie("jwt", createToken(email, user._id), {
             validateTill,
             secure: true,
             sameSite: "None"
         })
 
-        res.status(201).json({
+        res.status(200).json({
             user: {
                 id: user.id,
                 email: user.email,
                 profileSetup: user.profileSetup,
-                firstName:user.firstName,
-                lastName:user.lastName,
-                image:user.image,
-                color:user.theme
+                firstName: user.firstName,
+                lastName: user.lastName,
+                image: user.image,
+                color: user.theme
             },
+        })
+    } catch (error) {
+        console.log({ error });
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+
+export const getUserInfo = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+
+        if (!user) return res.status(400).send("user is not found");
+
+        res.status(200).json({
+
+            id: user.id,
+            email: user.email,
+            profileSetup: user.profileSetup,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            image: user.image,
+            color: user.theme
+
         })
     } catch (error) {
         console.log({ error });
