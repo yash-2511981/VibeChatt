@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { apiClient } from '@/lib/api-client'
+import { useAppStore } from '@/store'
 import { SIGNIN_ROUTE, SIGNUP_ROUTE } from '@/utils/constants'
 import { TabsContent } from '@radix-ui/react-tabs'
 import { useState } from 'react'
@@ -13,6 +14,7 @@ import { toast } from 'sonner'
 
 const Auth = () => {
     const navigate = useNavigate();
+    const {setUserInfo} = useAppStore();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -58,8 +60,8 @@ const Auth = () => {
     const handelLogin = async () => {
         if (validateLogin()) {
             const response = await apiClient.post(SIGNIN_ROUTE, { email, password }, { withCredentials: true })
-            console.log(response)
             resetField();
+            setUserInfo(response.data.user)
             if (response.data.user.profileSetup) navigate("/chat");
             else navigate("/profile");
         }
@@ -69,6 +71,7 @@ const Auth = () => {
         if (validateSignUp()) {
             const response = await apiClient.post(SIGNUP_ROUTE, { email, password }, { withCredentials: true })
             resetField();
+            setUserInfo(response.data.user)
             if (response.data.user.profileSetup) navigate("/chat");
             else navigate("/profile");
         }
