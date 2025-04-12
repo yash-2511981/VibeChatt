@@ -8,7 +8,7 @@ const createToken = (email, userId) => {
     return jwt.sign({ email, userId }, process.env.JWT_KEY, { expiresIn: validateTill })
 }
 
-export const signUp = async (req, res, next) => {
+export const signUp = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -22,7 +22,7 @@ export const signUp = async (req, res, next) => {
             sameSite: "None"
         })
 
-        res.status(201).json({
+        res.status(200).json({
             user: {
                 id: user.id,
                 email: user.email,
@@ -86,7 +86,32 @@ export const getUserInfo = async (req, res) => {
             firstName: user.firstName,
             lastName: user.lastName,
             image: user.image,
-            color: user.theme
+            theme: user.theme
+
+        })
+    } catch (error) {
+        console.log({ error });
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export const updateProfile = async (req, res) => {
+    try {
+        const id = req.userId;
+        const { firstName, lastName, theme} = req.body;
+
+        if (!firstName || !lastName) return res.status(400).send("Firstname LastName and color is required");
+
+        const user = await User.findByIdAndUpdate(id, { firstName, lastName, theme, profileSetup: true }, { new: true, runValidators: true });
+
+        res.status(200).json({
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            image: user.image,
+            theme: user.theme,
+            profileSetup: user.profileSetup,
 
         })
     } catch (error) {

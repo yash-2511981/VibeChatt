@@ -6,10 +6,13 @@ import { IoArrowBack } from 'react-icons/io5'
 import { FaTrash, FaPlus } from 'react-icons/fa'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { apiClient } from "@/lib/api-client";
+import { UPDATE_PROFILE_ROUTE } from "@/utils/constants";
 
 const Profile = () => {
     const { userInfo, setUserInfo } = useAppStore()
-    const [userDet, setUserDet] = useState({ firstName: "", lastName: "", image: "", theme: 0 });
+    const [userDet, setUserDet] = useState({ firstName: "", lastName: "", theme: 0 });
     const [hovered, setHovered] = useState(false);
 
 
@@ -27,8 +30,32 @@ const Profile = () => {
         }))
     }
 
-    const saveChanges = () => {
 
+    const validateUserDet = () => {
+        if (!userDet.firstName || userDet.firstName.length == 0) {
+            toast.error("First Name is required")
+            return false;
+        }
+        if (!userDet.lastName || userDet.lastName.length == 0) {
+            toast.error("Last Name is required")
+            return false;
+        }
+
+        return true;
+    }
+    const saveChanges = async () => {
+        if (validateUserDet()) {
+            try {
+                const response = await apiClient.post(UPDATE_PROFILE_ROUTE, userDet, { withCredentials: true });
+                if(response.status === 200 && response.data){
+                    setUserInfo({...response.data});
+                    console.log(response.data)
+                    toast.success("profile updated successfully")
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 
 

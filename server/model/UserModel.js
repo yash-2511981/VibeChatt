@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     firstName: { type: String, required: false },
     lastName: { type: String, required: false },
     image: { type: String, required: false },
-    theme: { type: Number, required: false },
+    theme: { type: Number,default:0},
     profileSetup: { type: Boolean, default: false },
 });
 
