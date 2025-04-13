@@ -1,6 +1,7 @@
 import { compare } from 'bcrypt';
 import User from '../model/UserModel.js'
 import jwt from 'jsonwebtoken'
+import { renameSync, unlinkSync } from 'fs'
 
 const validateTill = 3 * 24 * 60 * 60 * 1000;
 
@@ -98,7 +99,7 @@ export const getUserInfo = async (req, res) => {
 export const updateProfile = async (req, res) => {
     try {
         const id = req.userId;
-        const { firstName, lastName, theme} = req.body;
+        const { firstName, lastName, theme } = req.body;
 
         if (!firstName || !lastName) return res.status(400).send("Firstname LastName and color is required");
 
@@ -114,6 +115,45 @@ export const updateProfile = async (req, res) => {
             profileSetup: user.profileSetup,
 
         })
+    } catch (error) {
+        console.log({ error });
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export const setProfileImage = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).send("FIle is required");
+        const date = Date.now();
+        let fileName = "uploads/profiles/" + date + req.file.originalname;
+        renameSync(req.file.path, fileName);
+
+        const user = await User.findByIdAndUpdate(req.userId, { image: fileName }, { new: true, runValidators: true })
+
+        res.status(200).json({
+            image: user.image
+        })
+
+    } catch (error) {
+        console.log({ error });
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+export const removeProfileImage = async (req, res) => {
+    try {
+        const id = req.userId;
+        const user = await User.findById(id);
+        if (!user) return res.status(400).send("userNot Found");
+
+        if (user.image) {
+            unlinkSync(user.image);
+        }
+
+        user.image = null;
+        await user.save();
+
+        res.status(200).send("profile image removed successfully");
     } catch (error) {
         console.log({ error });
         return res.status(500).send("Internal Server Error");
