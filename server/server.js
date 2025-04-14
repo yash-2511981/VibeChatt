@@ -4,6 +4,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import mongoose, { mongo } from 'mongoose'
 import router from './routes/authRoutes.js'
+import contactsRoute from './routes/contactsRoutes.js'
 
 
 dotenv.config();
@@ -23,7 +24,9 @@ app.use("/uploads/profiles",express.static("uploads/profiles"))
 
 app.use(cookieParser());
 app.use(express.json());
+
 app.use("/api/auth", router)
+app.use("/api/contacts", contactsRoute)
 
 const server = app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
