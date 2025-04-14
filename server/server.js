@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import mongoose, { mongo } from 'mongoose'
 import router from './routes/authRoutes.js'
 import contactsRoute from './routes/contactsRoutes.js'
+import setupSocket from './socket.js'
 
 
 dotenv.config();
@@ -31,6 +32,8 @@ app.use("/api/contacts", contactsRoute)
 const server = app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)
 })
+
+setupSocket(server)
 
 mongoose.connect(databaseUrl).then(() => {
     console.log("database is connected")
