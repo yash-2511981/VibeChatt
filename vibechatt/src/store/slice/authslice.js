@@ -5,3 +5,4 @@ export const createAuthSlice = (set) => (
         setUserInfo: (userInfo) => set({ userInfo })
     }
 )
+

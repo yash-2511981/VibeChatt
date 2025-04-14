@@ -7,3 +7,8 @@ export const GETUSER_INFO = `${AUTH_ROUTES}/user-info`
 export const UPDATE_PROFILE_ROUTE = `${AUTH_ROUTES}/update-profile`
 export const SET_PROFILE_IMAGE = `${AUTH_ROUTES}/set-profile-image`
 export const REMOVE_PROFILE_IMAGE = `${AUTH_ROUTES}/remove-profile-image`
+export const LOGOUT = `${AUTH_ROUTES}/logout`;
+
+
+export const CONTACT_ROUTES = `api/contacts`
+export const SEARCH_CONTACT = `${CONTACT_ROUTES}/search`
