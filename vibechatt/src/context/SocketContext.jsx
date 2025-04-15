@@ -39,7 +39,6 @@ export const SocketProvider = ({ children }) => {
                     (msg.reciever && selectedChatData._id === msg.reciever._id);
                 
                 if (isChatMember) {
-                    console.log(msg)
                     addMessage(msg);
                 }
             });

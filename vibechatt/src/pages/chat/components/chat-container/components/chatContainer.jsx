@@ -1,19 +1,38 @@
+import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store"
+import { GET_CHAT_MESSAGES } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef } from "react"
 
 const MessageContainer = () => {
   const scrollRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages} = useAppStore()
+  const { selectedChatType, selectedChatData, selectedChatMessages,setSelectedChatMessage } = useAppStore()
 
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const response = await apiClient.post(GET_CHAT_MESSAGES, { id: selectedChatData._id }, { withCredentials: true })
+
+        if (response.status === 200 && response.data.messages) {
+          setSelectedChatMessage(response.data.messages)
+        }
+
+      } catch (error) {
+        console.log(error.message)
+      }
+    }
+
+    if (selectedChatData._id) {
+      if (selectedChatType === "contact") getMessages();
+    }
+  },[selectedChatType, selectedChatData, selectedChatMessages])
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    console.log(selectedChatMessages)
-
-  })
+  },[selectedChatMessages])
 
   const renderMessages = () => {
     let lastDate = null;
@@ -30,7 +49,7 @@ const MessageContainer = () => {
             </div>
             )}
           {
-            selectedChatType === "chat" && renderDmMsg(message)
+            selectedChatType === "contact" && renderDmMsg(message)
           }
         </div>
       )
@@ -47,7 +66,7 @@ const MessageContainer = () => {
         )
       }
       <div className="text-xs text-gray-600">
-          {moment(message.timestamp).format("LT")}
+        {moment(message.timestamp).format("LT")}
       </div>
     </div>)
   }

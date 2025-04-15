@@ -33,7 +33,7 @@ const MessageBar = () => {
             return;
         }
 
-        if (selectedChatType === "chat") {
+        if (selectedChatType === "contact") {
             socket.emit("sendMessage", {
                 sender: userInfo.id,
                 content: message,

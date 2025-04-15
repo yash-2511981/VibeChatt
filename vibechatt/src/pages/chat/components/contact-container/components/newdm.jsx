@@ -19,7 +19,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { useAppStore } from '@/store';
 
 const NewDm = () => {
-    const { selectedChatData,setSelectedChatType, setSelectedChatData } = useAppStore();
+    const {setSelectedChatType, setSelectedChatData } = useAppStore();
     const [openNewContactModal, setOpenNewContactModal] = useState(false)
     const [searchedContact, setSearchedContact] = useState([]);
 
@@ -42,7 +42,7 @@ const NewDm = () => {
     const selectNewContact = (contact) => {
         setOpenNewContactModal(false);
         setSearchedContact([])
-        setSelectedChatType("chat")
+        setSelectedChatType("contact")
         setSelectedChatData(contact)
     }
 
