@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { Input } from '@/components/ui/input';
 import Lottie from 'react-lottie';
-import { animationDefaultOptions } from '@/lib/utils';
+import { animationDefaultOptions, getColor } from '@/lib/utils';
 import { apiClient } from '@/lib/api-client';
 import { HOST, SEARCH_CONTACT } from '@/utils/constants';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -80,7 +80,7 @@ const NewDm = () => {
                                                 {contact.image ?
                                                     (<AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                                                     (
-                                                        <div className={`uppercase h-12 w-12   text text-5xl border-[1px] flex items-center justify-center rounded-full ${contact.theme}`}>
+                                                        <div className={`uppercase h-12 w-12   text text-5xl border-[1px] flex items-center justify-center rounded-full ${getColor(contact.theme)}`}>
                                                             {contact.firstName ?
                                                                 contact.firstName.split("").shift() :
                                                                 contact.email.split("").shift()}
