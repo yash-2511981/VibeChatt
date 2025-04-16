@@ -12,7 +12,7 @@ const MessageBar = () => {
     const emojiRef = useRef();
     const fileInputRef = useRef();
     const socket = useSocket();
-    const { selectedChatType, selectedChatData, userInfo } = useAppStore()
+    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading } = useAppStore()
     const [message, setMessage] = useState("");
     const [openEmojiPicker, setEmojiPicker] = useState(false)
 
@@ -65,8 +65,15 @@ const MessageBar = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append("file", file);
-                const response = await apiClient.post(SEND_FILE_MSG, formData, { withCredentials: true })
+                setIsUploading(true)
+                const response = await apiClient.post(SEND_FILE_MSG, formData, {
+                    withCredentials: true, onUploadProgress: data => {
+                        setUploadProgress(Math.round((100 * data.loaded)/data.total))
+                    }
+                })
+                
                 if (response.status === 200 && response.data) {
+                    setIsUploading(false)
                     if (selectedChatType === "contact") {
                         socket.emit("sendMessage", {
                             sender: userInfo.id,
@@ -80,6 +87,7 @@ const MessageBar = () => {
             }
         } catch (error) {
             console.log(error)
+            setIsUploading(false)
         }
 
     }
@@ -91,14 +99,13 @@ const MessageBar = () => {
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' onClick={attachmentClick}>
                     <GrAttachment className="text-2xl" />
                 </button>
-                <input type="file" className="hidden" ref={fileInputRef} onChange={handleAttachMentChange}/>
+                <input type="file" className="hidden" ref={fileInputRef} onChange={handleAttachMentChange} />
                 <div className="relative">
                     <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' onClick={() => setEmojiPicker(true)}>
                         <RiEmojiStickerLine className="text-2xl" />
                     </button>
                     <div className="absolute bottom-16 right-0" ref={emojiRef}>
-                        <EmojiPicker theme="dark" open={openEmojiPicker} onEmojiClick={handleAddEmoji}
-                            autoFocusSearch={false} />
+                        <EmojiPicker theme="dark" open={openEmojiPicker} onEmojiClick={handleAddEmoji} />
                     </div>
                 </div>
             </div>

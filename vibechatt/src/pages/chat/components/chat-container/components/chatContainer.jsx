@@ -5,12 +5,18 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react"
 import { MdFolderZip } from 'react-icons/md'
 import { IoMdArrowRoundDown } from 'react-icons/io'
+import { RiCloseFill } from "react-icons/ri";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
   const containerRef = useRef();
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const { selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage } = useAppStore()
+  const { selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading } = useAppStore()
+
+  //states to manage the image click and download
+  const [showImage, setShowImage] = useState(undefined);
+  const [imageUrl, setImageUrl] = useState("")
+
 
   // Fetch messages when chat changes
   useEffect(() => {
@@ -29,7 +35,7 @@ const MessageContainer = () => {
     if (selectedChatData?._id) {
       if (selectedChatType === "contact") getMessages();
     }
-  }, [selectedChatType, selectedChatData, setSelectedChatMessage]) // Removed selectedChatMessages to prevent loops
+  }, [selectedChatType, selectedChatData, setSelectedChatMessage]) // Removed
 
   // Handle scrolling when messages change
   useEffect(() => {
@@ -50,8 +56,7 @@ const MessageContainer = () => {
     setIsManualScrolling(!isNearBottom);
   };
 
-
-
+  //function for rendering all the messasges
   const renderMessages = () => {
     let lastDate = null;
     return selectedChatMessages.map((message, index) => {
@@ -74,22 +79,31 @@ const MessageContainer = () => {
     })
   };
 
+  //fuction for checking the message is image type or not
   const checkImage = (filePath) => {
     const imageRegex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/
     return imageRegex.test(filePath);
   }
 
+  //this function for handling download file event
   const downloadFile = async (url) => {
-
-    const response = await apiClient.get(`${HOST}/${url}`, { responseType: "blob" });
+    setIsDownloading(true);
+    const response = await apiClient.get(`${HOST}/${url}`, {
+      responseType: "blob",
+      onDownloadProgress: data => {
+        setDownloadProgress(Math.round((100 * data.loaded) / data.total))
+      }
+    });
     const urlBlob = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement("a");
     link.href = urlBlob;
-    link.setAttribute("download",url.split("/").pop())
+    link.setAttribute("download", url.split("/").pop())
     document.body.appendChild(link);
     link.click();
     link.remove();
     window.URL.revokeObjectURL(urlBlob)
+    setIsDownloading(false)
+    setDownloadProgress(0);
   }
 
   const renderDmMsg = (message) => {
@@ -108,10 +122,23 @@ const MessageContainer = () => {
           message.messageType === "file" && (
             <div className={`${message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}>
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}
+            >
               {
                 checkImage(message.fileUrl) ?
-                  (<div className="">
+                  (<div className="relative" onClick={() => {
+                    setShowImage(true);
+                    setImageUrl(message.fileUrl);
+                  }}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadFile(message.fileUrl);
+                      }}
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bg-black/60 p-3 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                    >
+                      <IoMdArrowRoundDown className="text-white text-3xl" />
+                    </button>
                     <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
                   </div>)
                   :
@@ -144,7 +171,23 @@ const MessageContainer = () => {
       className="flex-1 overflow-y-auto hide-scrollbar p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full"
     >
       {renderMessages()}
-      <div ref={scrollRef}></div>
+      <div ref={scrollRef} />
+      {
+        showImage &&
+        <div className="fixed z-1000 top-0 left-0 h-[100vh] w-[100vw] flex items-center justify-center backdrop-blur-lg  flex-col">
+          <div>
+            <button className='bg-gray-900 p-3 rounded-full  hover:bg-gray-700 transition-all duration-300 cursor-pointer my-2'>
+              <RiCloseFill className='text-xl' onClick={() => {
+                setShowImage(false)
+                setImageUrl("")
+              }} />
+            </button>
+          </div>
+          <div>
+            <img src={`${HOST}/${imageUrl}`} className="h-[80vh] w-full bg-cover" />
+          </div>
+        </div>
+      }
     </div>
   )
 }
