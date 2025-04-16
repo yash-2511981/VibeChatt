@@ -1,6 +1,7 @@
 import Message from "../model/MessageModel.js";
+import { mkdirSync, renameSync } from 'fs'
 
-export const getMessages = async (req, res, next) => {
+export const getMessages = async (req, res) => {
     try {
 
         const user1 = req.userId
@@ -16,6 +17,25 @@ export const getMessages = async (req, res, next) => {
         }).sort({ timestamp: 1 })
 
         return res.status(200).json({ messages })
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+
+export const uploadFile = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).send("file is required");
+        let date = Date.now();
+        let fileDir = `uploads/files/${date}`;
+        let filename = `${fileDir}/${req.file.originalname}`;
+
+        mkdirSync(fileDir, { recursive: true });
+        renameSync(req.file.path, filename);
+
+        return res.status(200).json(filename)
+
     } catch (error) {
         console.log(error.message);
         return res.status(500).send("Internal Server Error");

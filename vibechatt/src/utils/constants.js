@@ -15,3 +15,4 @@ export const GET_ALL_CONTACTS = `${CONTACT_ROUTES}/get-all-contacts`
 
 const MESSAGE_ROUTES = "api/messages";
 export const GET_CHAT_MESSAGES = `${MESSAGE_ROUTES}/get-messages`
+export const SEND_FILE_MSG = `${MESSAGE_ROUTES}/send-file`;

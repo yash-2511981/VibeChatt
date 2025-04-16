@@ -7,12 +7,13 @@ const ContactList = ({ contacts, isChannel = false }) => {
     const { setSelectedChatType, setSelectedChatData, selectedChatData, selectedChatType } = useAppStore();
 
     const handleClick = (contact) => {
+
         if (isChannel) setSelectedChatType("channel");
         else setSelectedChatType("contact");
 
         if (selectedChatData && selectedChatData._id !== contact._id)
-            console.log("i am in")
-        setSelectedChatData(contact);
+            console.log()
+            setSelectedChatData(contact);
     }
 
     return (
@@ -28,7 +29,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                             {contact.image ?
                                                 (<AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                                                 (
-                                                    <div className={`uppercase h-10 w-10   text text-5xl border-[1px] flex items-center justify-center rounded-full ${getColor(contact.theme)}`}>
+                                                    <div className={ `uppercase h-10 w-10 text-3xl border-[1px] flex items-center justify-center rounded-full ${selectedChatData && selectedChatData._id === contact._id ? "border-white ":getColor(contact.theme)}`}>
                                                         {contact.firstName ?
                                                             contact.firstName.split("").shift() :
                                                             contact.email.split("").shift()}
@@ -37,6 +38,15 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                         </Avatar>
                                     </>
                                 )
+                            }
+                            {
+                                isChannel &&
+                                (
+                                    <div className="bg-[#ffffff22] h-10 w-10 flex items-center justify-center rounded-full">#</div>
+                                )
+                            }
+                            {
+                                isChannel ? (<span>{contact.name}</span>) : (<span>{`${contact.firstName} ${contact.lastName}`}</span>)
                             }
                         </div>
                     </div>
