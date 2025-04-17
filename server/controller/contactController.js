@@ -33,6 +33,28 @@ export const searchedContact = async (req, res, next) => {
     }
 }
 
+export const getAllContacts = async (req, res, next) => {
+    try {
+
+        const users = await User.find(
+            { _id: { $ne: req.userId } },
+            "firstName lastName _id email"
+        );
+
+        const contacts = users.map((user) =>
+        ({
+            label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
+            value:user._id
+        })
+        );
+
+        return res.status(200).json({ contacts })
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
 
 
 export const getContactsDmList = async (req, res, next) => {
@@ -54,7 +76,7 @@ export const getContactsDmList = async (req, res, next) => {
                 $group: {
                     _id: {
                         $cond: {
-                            if: { $eq: ["$sender",userId] },
+                            if: { $eq: ["$sender", userId] },
                             then: "$reciever",
                             else: "$sender"
                         }
@@ -85,7 +107,7 @@ export const getContactsDmList = async (req, res, next) => {
                 }
             },
             {
-                $sort:{lastMessageTime:-1}
+                $sort: { lastMessageTime: -1 }
             }
         ])
 
