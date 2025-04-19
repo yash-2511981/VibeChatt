@@ -5,8 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev":"concurrently \"npm run server\" \"npm run client\"",
-    "server":"nodemon server/server.js",
-    "client":"cd client && npm run dev"
+    "server":"cd server && nodemon server.js",
+    "client":"cd vibechatt && npm run dev"
   },
   "keywords": [],
   "author": "",

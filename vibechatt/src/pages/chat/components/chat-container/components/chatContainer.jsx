@@ -39,6 +39,7 @@ const MessageContainer = () => {
         const response = await apiClient.get(`${GET_CHANNEEL_MSG}/${selectedChatData._id}`,{ withCredentials: true })
 
         if (response.status === 200 && response.data.messages) {
+          console.log(response.data.messages)
           setSelectedChatMessage(response.data.messages)
         }
       } catch (error) {
@@ -46,9 +47,10 @@ const MessageContainer = () => {
       }
     }
 
-    if (selectedChatData?._id) {
-      if (selectedChatType === "contact") getMessages();
-      if (selectedChatType === "channel") getChannelMsg();
+    if (selectedChatData._id && selectedChatType) {
+      if (selectedChatType === "contact"){ getMessages(); console.log("dm")};
+      if (selectedChatType === "channel") {getChannelMsg(); console.log("channel")};
+
     }
   }, [selectedChatType, selectedChatData, setSelectedChatMessage]) // Removed
 
@@ -183,6 +185,7 @@ const MessageContainer = () => {
   }
 
   const renderChannelMsg = (message) => {
+    console.log(message)
     return (
       <div className={`mt-5 ${message.sender._id !== userInfo.id ? "text-left" : "text-right"}`}>
         {
