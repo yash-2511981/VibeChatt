@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
 
             socket.current.on("recieveMessage", (msg) => {
                 // Get latest state when the message is received
-                const { selectedChatType, selectedChatData, addMessage } = useAppStore.getState();
+                const { selectedChatType, selectedChatData, addMessage,addContactsInDmContacts } = useAppStore.getState();
 
                 if (!selectedChatData || selectedChatType === undefined) {
                     return; // Exit early if no chat is selected
@@ -41,15 +41,17 @@ export const SocketProvider = ({ children }) => {
                 if (isChatMember) {
                     addMessage(msg);
                 }
+                addContactsInDmContacts(msg)
             });
 
             socket.current.on("recieve-channel-message", (msg) => {
                 console.log(msg);
-                const { selectedChatType, selectedChatData, addMessage } = useAppStore.getState();
+                const { selectedChatType, selectedChatData, addMessage,addChaannelInChannelList } = useAppStore.getState();
 
                 if (selectedChatType !== undefined && selectedChatData._id === msg.channelId) {
                     addMessage(msg)
                 }
+                addChaannelInChannelList(msg)
             })
 
 
