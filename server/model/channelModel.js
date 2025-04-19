@@ -4,7 +4,7 @@ const channelSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    membaers: [{
+    members: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
@@ -39,6 +39,6 @@ channelSchema.pre("findOneAndUpdate",function (next){
     next();
 })
 
-const Channel = mongoose.model("Message", channelSchema);
+const Channel = mongoose.model("Channel", channelSchema);
 
 export default Channel;

@@ -28,14 +28,15 @@ const MessageBar = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickedOutside)
         }
+        
     }, [emojiRef])
-
+    
     const handelSendMsg = async () => {
         if (!socket) {
             console.error("Socket connection not established");
             return;
         }
-
+        
         if (selectedChatType === "contact") {
             socket.emit("sendMessage", {
                 sender: userInfo.id,
@@ -44,6 +45,14 @@ const MessageBar = () => {
                 messageType: "text",
                 fileUrl: undefined
             });
+        }else if(selectedChatType === "channel"){
+            socket.emit("send-channel-msg",{
+                sender:userInfo.id,
+                content:message,
+                messageType:"text",
+                fileUrl:undefined,
+                channelId:selectedChatData._id
+            })
         }
 
         setMessage("")
@@ -82,7 +91,16 @@ const MessageBar = () => {
                             messageType: "file",
                             fileUrl: response.data
                         });
+                    }else if(selectedChatType === "channel"){
+                        socket.emit("send-channel-msg",{
+                            sender:userInfo.id,
+                            content:message,
+                            messageType:"file",
+                            fileUrl:response.data,
+                            channelId:selectedChatData._id
+                        })
                     }
+            
                 }
             }
         } catch (error) {

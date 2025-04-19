@@ -1,5 +1,6 @@
 import { Socket, Server as SocketIoSever } from 'socket.io'
 import Message from './model/MessageModel.js';
+import Channel from './model/channelModel.js';
 
 const setupSocket = (server) => {
     const io = new SocketIoSever(server, {
@@ -30,8 +31,8 @@ const setupSocket = (server) => {
         const createdMessage = await Message.create(message);
 
         const messageData = await Message.findById(createdMessage._id).
-        populate("sender","id email firstName lastName image theme")
-        .populate("reciever","id email firstName lastName image theme");
+            populate("sender", "id email firstName lastName image theme")
+            .populate("reciever", "id email firstName lastName image theme");
 
 
         [senderSocketId, recieverSocketId].forEach(socketId => {
@@ -39,6 +40,46 @@ const setupSocket = (server) => {
                 io.to(socketId).emit("recieveMessage", messageData);
             }
         });
+    }
+
+    const sendChannelMsg = async (message) => {
+        const { channelId, sender, content, messageType, fileUrl } = message;
+        
+        const createMsg = await Message.create({
+            sender,
+            reciever: null,
+            content,
+            messageType,
+            timestamp: new Date(),
+            fileUrl
+        })
+        
+        const messageData = await Message.findById(createMsg._id).populate("sender", "id email firstName lastName image theme").exec()
+        
+        await Channel.findByIdAndUpdate(channelId, {
+            $push: { messages: createMsg._id }
+        });
+        
+        const channel = await Channel.findById(channelId).populate("members");
+        
+        const finaldata = { ...messageData._doc, channelId: channel._id };
+        
+        if (channel && channel.members) {
+            channel.members.forEach((member) => {
+                console.log(member._id)
+                console.log(member._id.toString())
+                const memberSocketId = userSocketMap.get(member._id.toString())
+                
+                if (memberSocketId) {
+                    io.to(memberScoketId).emit("recieve-channel-message", finaldata)
+                }
+            });
+            
+            const adminSocketId = userSocketMap.get(channel.admin._id.toString())
+            if (adminSocketId) {
+                io.to(adminSocketId).emit("recieve-channel-message", finaldata)
+            }
+        }
     }
 
     io.on("connection", (socket) => {
@@ -52,6 +93,7 @@ const setupSocket = (server) => {
         }
 
         socket.on("sendMessage", sendMessage)
+        socket.on("send-channel-msg", sendChannelMsg)
         socket.on("disconnect", () => disconnect(socket))
 
     })

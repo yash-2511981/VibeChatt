@@ -8,12 +8,15 @@ const ContactList = ({ contacts, isChannel = false }) => {
 
     const handleClick = (contact) => {
 
-        if (isChannel) setSelectedChatType("channel");
+        if (isChannel)
+            setSelectedChatType("channel");
         else setSelectedChatType("contact");
+
+
 
         if (selectedChatData && selectedChatData._id !== contact._id)
             console.log()
-            setSelectedChatData(contact);
+        setSelectedChatData(contact);
     }
 
     return (
@@ -29,7 +32,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                             {contact.image ?
                                                 (<AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                                                 (
-                                                    <div className={ `uppercase h-10 w-10 text-3xl border-[1px] flex items-center justify-center rounded-full ${selectedChatData && selectedChatData._id === contact._id ? "border-white ":getColor(contact.theme)}`}>
+                                                    <div className={`uppercase h-10 w-10 text-3xl border-[1px] flex items-center justify-center rounded-full ${selectedChatData && selectedChatData._id === contact._id ? "border-white " : getColor(contact.theme)}`}>
                                                         {contact.firstName ?
                                                             contact.firstName.split("").shift() :
                                                             contact.email.split("").shift()}

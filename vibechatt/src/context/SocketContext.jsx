@@ -27,21 +27,31 @@ export const SocketProvider = ({ children }) => {
             socket.current.on("recieveMessage", (msg) => {
                 // Get latest state when the message is received
                 const { selectedChatType, selectedChatData, addMessage } = useAppStore.getState();
-                
+
                 if (!selectedChatData || selectedChatType === undefined) {
                     return; // Exit early if no chat is selected
                 }
-                
+
                 // Check if the message belongs to the current chat
-                const isChatMember = 
+                const isChatMember =
                     // Compare _id properties as they're the ones with values
-                    (msg.sender && selectedChatData._id === msg.sender._id) || 
+                    (msg.sender && selectedChatData._id === msg.sender._id) ||
                     (msg.reciever && selectedChatData._id === msg.reciever._id);
-                
+
                 if (isChatMember) {
                     addMessage(msg);
                 }
             });
+
+            socket.current.on("recieve-channel-message", (msg) => {
+                console.log(msg);
+                const { selectedChatType, selectedChatData, addMessage } = useAppStore.getState();
+
+                if (selectedChatType !== undefined && selectedChatData._id === msg.channelId) {
+                    console.log(msg)
+                    addMessage(msg)
+                }
+            })
 
 
             return () => {

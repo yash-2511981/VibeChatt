@@ -11,7 +11,7 @@ const MessageContainer = () => {
   const scrollRef = useRef();
   const containerRef = useRef();
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const { selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading } = useAppStore()
+  const { userInfo, selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading } = useAppStore()
 
   //states to manage the image click and download
   const [showImage, setShowImage] = useState(undefined);
@@ -73,6 +73,9 @@ const MessageContainer = () => {
           )}
           {
             selectedChatType === "contact" && renderDmMsg(message)
+          }
+          {
+            selectedChatType === "channel" && renderChannelMsg(message)
           }
         </div>
       )
@@ -164,11 +167,28 @@ const MessageContainer = () => {
     )
   }
 
+  const renderChannelMsg = (message) => {
+    return (
+      <div className={`mt-5 ${message.sender._id !== userInfo.id ? "text-left" : "text-right"}`}>
+        {
+          message.messageType === "text" && (
+            <div className={`${message.sender !== userInfo.id
+              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
+              {message.content}
+            </div>
+          )
+        }
+
+      </div>
+    )
+  }
+
   return (
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto hide-scrollbar p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full"
+      className="flex-1 overflow-y-auto custom-scrollbar p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full"
     >
       {renderMessages()}
       <div ref={scrollRef} />
