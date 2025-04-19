@@ -48,7 +48,6 @@ export const SocketProvider = ({ children }) => {
                 const { selectedChatType, selectedChatData, addMessage } = useAppStore.getState();
 
                 if (selectedChatType !== undefined && selectedChatData._id === msg.channelId) {
-                    console.log(msg)
                     addMessage(msg)
                 }
             })

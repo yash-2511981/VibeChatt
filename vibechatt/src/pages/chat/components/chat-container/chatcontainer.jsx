@@ -1,7 +1,6 @@
 import MessageBar from "./components/MessageBar"
 import ChatHeader from "./components/chatHeader"
 import MessageContainer from "./components/chatContainer"
-import { useAppStore } from "@/store";
 
 const ChatContainer = () => {
   

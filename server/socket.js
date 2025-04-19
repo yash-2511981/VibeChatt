@@ -66,12 +66,10 @@ const setupSocket = (server) => {
         
         if (channel && channel.members) {
             channel.members.forEach((member) => {
-                console.log(member._id)
-                console.log(member._id.toString())
                 const memberSocketId = userSocketMap.get(member._id.toString())
                 
                 if (memberSocketId) {
-                    io.to(memberScoketId).emit("recieve-channel-message", finaldata)
+                    io.to(memberSocketId).emit("recieve-channel-message", finaldata)
                 }
             });
             
