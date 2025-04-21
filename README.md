@@ -46,7 +46,7 @@ npm install
 ```
 
 3.Set up the environment variables:
-. Create a .env file in the server directory with the following variables:
+- Create a .env file in the server directory with the following variables:
 ```
 PORT = 3000
 JWT_KEY = "YOUR_JWT_SECRET"
@@ -55,7 +55,7 @@ DATABASE_URL = your_mongodb_connection_string
 ```
 
 4.start the development server
-. start front-end and back-end individually 
+- start front-end and back-end individually 
 ```bash
 # start backend server
 cd server
