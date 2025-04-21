@@ -157,20 +157,20 @@ const MessageContainer = () => {
                       }}
                       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bg-black/60 p-3 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300 cursor-pointer"
                     >
-                      <IoMdArrowRoundDown className="text-white text-3xl" />
+                      <IoMdArrowRoundDown className="text-white text-xl " />
                     </button>
                     <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
                   </div>)
                   :
                   (<div className="flex items-center justify-center gap-3">
-                    <span className="text-white/8 text-sm bg-black/20 rounded-full p-3"
+                    <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
                     >
-                      <MdFolderZip />
+                      <MdFolderZip/>
                     </span>
                     <span>{message.fileUrl.split("/").pop()}</span>
-                    <span className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
+                    <span className="bg-black/20 p-3 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 md:text-2xl"
                       onClick={() => downloadFile(message.fileUrl)}>
-                      <IoMdArrowRoundDown className="text-3xl" />
+                      <IoMdArrowRoundDown className="md:text-2xl"/>
                     </span>
                   </div>)
               }
