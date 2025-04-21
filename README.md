@@ -66,7 +66,7 @@ cd client
 npm run dev
 ```
 
-.start client and server concurrently
+- tart client and server concurrently
 ```bash
 #run both server and clien at once inside chatApp
 npm install
