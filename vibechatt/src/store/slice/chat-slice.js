@@ -1,4 +1,7 @@
 export const createChatSlice = (set, get) => ({
+    incoming:false,
+    outgoing:false,
+    calldetails:[],
     selectedChatType: undefined,
     selectedChatData: undefined,
     selectedChatMessages: [],
@@ -65,4 +68,7 @@ export const createChatSlice = (set, get) => ({
 
         set({allContacts:dmContacts})
     },
+    setIncoming:(incoming) => set({incoming}),
+    setOutgoing:(outgoing) => set({outgoing}),
+    setCallDetails:(calldetails) => set({calldetails}),
 })

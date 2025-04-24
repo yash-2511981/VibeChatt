@@ -53,6 +53,11 @@ JWT_KEY = "YOUR_JWT_SECRET"
 ORIGIN = "http://localhost:5173"
 DATABASE_URL = your_mongodb_connection_string
 ```
+- create a .env file in the client directory(vibechatt) with the following variables:
+```bash
+VITE_SERVER_URL="YOUR_SERVER_URL"
+#example: VITE_SERVER_URL="http://localhost:3000" 
+```
 
 4.start the development server
 - start front-end and back-end individually 

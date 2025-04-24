@@ -14,7 +14,7 @@ import { toast } from 'sonner'
 
 const Auth = () => {
     const navigate = useNavigate();
-    const {setUserInfo} = useAppStore();
+    const { setUserInfo } = useAppStore();
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -58,23 +58,32 @@ const Auth = () => {
 
     //handle login and sign up process
     const handelLogin = async () => {
-        if (validateLogin()) {
-            const response = await apiClient.post(SIGNIN_ROUTE, { email, password }, { withCredentials: true })
-            resetField();
-            setUserInfo(response.data.user)
-            if (response.data.user.profileSetup) navigate("/chat");
-            else navigate("/profile");
+        try {
+            if (validateLogin()) {
+                const response = await apiClient.post(SIGNIN_ROUTE, { email, password }, { withCredentials: true })
+                resetField();
+                setUserInfo(response.data.user);
+                if (response.data.user.profileSetup) navigate("/chat");
+                else navigate("/profile");
+            }
+        } catch (error) {
+            toast.error(error.response.data)
         }
     }
 
     const handleSignUp = async () => {
-        if (validateSignUp()) {
-            const response = await apiClient.post(SIGNUP_ROUTE, { email, password }, { withCredentials: true })
-            resetField();
-            setUserInfo(response.data.user)
-            if (response.data.user.profileSetup) navigate("/chat");
-            else navigate("/profile");
+        try {
+            if (validateSignUp()) {
+                const response = await apiClient.post(SIGNUP_ROUTE, { email, password }, { withCredentials: true })
+                resetField();
+                setUserInfo(response.data.user)
+                if (response.data.user.profileSetup) navigate("/chat");
+                else navigate("/profile");
+            }
+        } catch (error) {
+            toast.error(error.response.data);
         }
+
     }
 
     return (

@@ -94,6 +94,11 @@ const setupSocket = (server) => {
         socket.on("send-channel-msg", sendChannelMsg)
         socket.on("disconnect", () => disconnect(socket))
 
+        /* socket.on("incoming",incomingCall);
+        socket.on("outgoing",outgoingCall);
+        socket.on("accept",accept);
+        socket.on("reject",reject); */
+
     })
 
 }

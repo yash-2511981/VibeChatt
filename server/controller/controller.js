@@ -13,7 +13,10 @@ export const signUp = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (!email || !password) return res.status(400).send("Email and Password is required");
+        if (!email || !password) return res.status(404).send("Email and Password is required");
+
+        const isUser = await User.findOne({email});
+        if(isUser) return res.status(404).send("user is registered with this email id");
 
         const user = await User.create({ email, password });
 
