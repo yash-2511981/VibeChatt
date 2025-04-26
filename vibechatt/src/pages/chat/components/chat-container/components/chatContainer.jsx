@@ -201,7 +201,7 @@ const MessageContainer = () => {
           message.messageType === "file" && (
             <div className={`${message.sender._id === userInfo.id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 ml-10 max-w-[50%] break-words`}
             >
               {
                 checkImage(message.fileUrl) ?

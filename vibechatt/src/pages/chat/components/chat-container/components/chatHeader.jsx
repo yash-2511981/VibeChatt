@@ -1,5 +1,4 @@
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import Call from '@/components/ui/Call';
 import { useSocket } from '@/context/SocketContext';
 import { useAppStore } from '@/store'
 import { HOST } from '@/utils/constants';
@@ -8,15 +7,25 @@ import { RiCloseFill } from 'react-icons/ri'
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType,userInfo} = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo,setCallStatus,setFrom,setTo } = useAppStore();
   const socket = useSocket();
 
-  const handleOutgoingC = (selectedChatData) => {
- 
+  const handleOutgoingCall = async () => {
+    if (!socket) return;
+    setCallType("voicecall")
+    setcallUIState("fullscreen")
+    setCallStatus("calling")    
+    setFrom(userInfo);
+    setTo(selectedChatData)
+    socket.emit("outgoingCall", {
+      from: userInfo,
+      to: selectedChatData,
+    })
   }
 
-  const handleOutgoingVC = () =>{
-
+  const handleOutgoingVideoCall = () => {
+    setCallType("videocall")
+    setcallUIState("fullscreen")
   }
 
   return (
@@ -53,12 +62,12 @@ const ChatHeader = () => {
             (<div className='mr-5 gap-10 flex items-center justify-between'>
               <div className="flex items-center justify-end gap-5">
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
-                  <IoVideocam className='text-3xl' onClick={handleOutgoingVC} />
+                  <IoVideocam className='text-3xl' onClick={handleOutgoingVideoCall} />
                 </button>
               </div>
               <div className="flex items-center justify-end gap-5">
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
-                  <IoCall className='text-3xl' onClick={handleOutgoingC} />
+                  <IoCall className='text-3xl' onClick={handleOutgoingCall} />
                 </button>
               </div>
             </div>

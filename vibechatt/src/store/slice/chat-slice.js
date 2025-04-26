@@ -1,7 +1,6 @@
 export const createChatSlice = (set, get) => ({
-    incoming:false,
-    outgoing:false,
-    calldetails:[],
+    // Existing states
+    calldetails: [],
     selectedChatType: undefined,
     selectedChatData: undefined,
     selectedChatMessages: [],
@@ -11,10 +10,12 @@ export const createChatSlice = (set, get) => ({
     fileUploadProgress: 0,
     fileDownloadProgress: 0,
     channels: [],
+    
+    // Existing methods
     setChannel: (channels) => set({ channels }),
     addChannel: (channel) => {
         const channels = get().channels;
-        set({ channels: [channel, ...channels] })
+        set({ channels: [channel, ...channels] });
     },
     setIsUploading: (isUploading) => set({ isUploading }),
     setIsDownloading: (isDownload) => set({ isDownload }),
@@ -28,7 +29,7 @@ export const createChatSlice = (set, get) => ({
     addMessage: (msg) => {
         const selectedChatMessages = get().selectedChatMessages;
         const selectedChatType = get().selectedChatType;
-
+        
         set({
             selectedChatMessages: [
                 ...selectedChatMessages, {
@@ -37,7 +38,7 @@ export const createChatSlice = (set, get) => ({
                     sender: selectedChatType === "channel" ? msg.sender : msg.sender._id
                 }
             ]
-        })
+        });
     },
     addChaannelInChannelList: (message) => {
         const channels = get().channels;
@@ -56,19 +57,18 @@ export const createChatSlice = (set, get) => ({
         const fromId = message.sender._id === userId ? message.reciever._id : message.sender._id;
         const fromData = message.sender._id === userId ? message.reciever : message.sender;
         const dmContacts = get().allContacts;
-        const data = dmContacts.find((c)=> c._id === fromId);
-        const index = dmContacts.findIndex((c)=> c._id === fromId);
+        const data = dmContacts.find((c) => c._id === fromId);
+        const index = dmContacts.findIndex((c) => c._id === fromId);
         
-        if(index !== -1 && index !== undefined){
-            dmContacts.splice(index,1);
+        if (index !== -1 && index !== undefined) {
+            dmContacts.splice(index, 1);
             dmContacts.unshift(data);
-        }else{
+        } else {
             dmContacts.unshift(fromData);
         }
-
-        set({allContacts:dmContacts})
+        
+        set({ allContacts: dmContacts });
     },
-    setIncoming:(incoming) => set({incoming}),
-    setOutgoing:(outgoing) => set({outgoing}),
-    setCallDetails:(calldetails) => set({calldetails}),
-})
+    
+  
+});

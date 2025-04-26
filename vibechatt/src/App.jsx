@@ -1,14 +1,15 @@
-
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Auth from './pages/auth/Auth'
 import Chat from './pages/chat/Chat'
 import Profile from './pages/profile/Profile'
-import { Children, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppStore } from './store'
 import { apiClient } from './lib/api-client'
 import { GETUSER_INFO } from './utils/constants'
+import { CallUI } from './pages/calls/CallUi' // Import the CallUI component
 
-const PrivateRoute = ({children}) => {
+
+const PrivateRoute = ({ children }) => {
   const { userInfo } = useAppStore();
   const isAuthenticate = !!userInfo;
   return isAuthenticate ? children : <Navigate to="/auth" />
@@ -45,34 +46,34 @@ function App() {
     } else {
       setLoading(false);
     }
-
   }, [userInfo, setUserInfo])
 
-  if(loading) return <div>Loading</div>
+  if (loading) return <div>Loading</div>
 
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/auth' element={
-            <AuthRoute>
-              <Auth />
-            </AuthRoute>
-          } />
-          <Route path='/chat' element={
-            <PrivateRoute>
-              <Chat />
-            </PrivateRoute>
-          } />
-          <Route path='/profile' element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          } />
-          <Route path='*' element={<Navigate to='/auth' />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+
+    <BrowserRouter>
+      {userInfo && <CallUI />}
+      <Routes>
+        <Route path='/auth' element={
+          <AuthRoute>
+            <Auth />
+          </AuthRoute>
+        } />
+        <Route path='/chat' element={
+          <PrivateRoute>
+            <Chat />
+          </PrivateRoute>
+        } />
+        <Route path='/profile' element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        } />
+        <Route path='*' element={<Navigate to='/auth' />} />
+      </Routes>
+    </BrowserRouter>
+
   )
 }
 
