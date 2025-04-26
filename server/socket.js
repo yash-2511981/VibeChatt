@@ -100,7 +100,7 @@ const setupSocket = (server) => {
 
     const outGoingCall = async (data) => {
         const { from, to } = data;
-        const calleesocketId = userSocketMap.get(to._id);
+        const calleesocketId = userSocketMap.get(to.id);
         const callersocketId = userSocketMap.get(from.id);
         if (calleesocketId) {
             io.to(calleesocketId).emit("incomingCall", data);
@@ -181,7 +181,7 @@ const setupSocket = (server) => {
         socket.on("outgoingCall", outGoingCall);
         socket.on("call-accepted", callAccepted);
         socket.on("call-rejected", callRejected);
-        socket.on("endCall", endCall);
+        socket.on("call-ended", endCall);
 
         // Handle ICE candidates
         socket.on('iceCandidate', ({ to, from, candidate }) => {

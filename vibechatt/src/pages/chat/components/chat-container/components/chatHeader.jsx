@@ -7,19 +7,32 @@ import { RiCloseFill } from 'react-icons/ri'
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo,setCallStatus,setFrom,setTo } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setCallStatus, setFrom, setTo } = useAppStore();
   const socket = useSocket();
 
   const handleOutgoingCall = async () => {
     if (!socket) return;
     setCallType("voicecall")
     setcallUIState("fullscreen")
-    setCallStatus("calling")    
+    setCallStatus("calling")
     setFrom(userInfo);
-    setTo(selectedChatData)
+    setTo({
+      id: selectedChatData._id,
+      firstName: selectedChatData.firstName,
+      lastName: selectedChatData.lastName,
+      theme: selectedChatData.theme,
+      image: selectedChatData.image
+    })
+
     socket.emit("outgoingCall", {
       from: userInfo,
-      to: selectedChatData,
+      to: {
+        id: selectedChatData._id,
+        firstName: selectedChatData.firstName,
+        lastName: selectedChatData.lastName,
+        theme: selectedChatData.theme,
+        image: selectedChatData.image
+      },
     })
   }
 

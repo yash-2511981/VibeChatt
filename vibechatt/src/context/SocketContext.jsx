@@ -56,15 +56,15 @@ export const SocketProvider = ({ children }) => {
 
             // Call-related event handlers
             socket.current.on('incomingCall', (data) => {
-                setFrom(data.to);
-                setTo(data.from)
+                console.log({from : data.from,to : data.to});
+                setFrom(data.from);
+                setTo(data.to)
                 setcallUIState("notification");
-
             });
 
             socket.current.on('incomingVideoCall', (data) => {
                 setcallUIState("notification");
-                setCaller(data.from)
+                setTo(data.from)
             });
 
             socket.current.on('callAccepted', (data) => {
@@ -80,7 +80,6 @@ export const SocketProvider = ({ children }) => {
             });
 
             socket.current.on('callFailed', (data) => {
-                console.error("Call failed:", data.message);
                 endCall();
             });
 
