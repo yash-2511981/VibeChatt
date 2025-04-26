@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo,setFrom,setTo,setcallUIState,endCall,setCallStatus} = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus,setCallType } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -56,15 +56,16 @@ export const SocketProvider = ({ children }) => {
 
             // Call-related event handlers
             socket.current.on('incomingCall', (data) => {
-                console.log({from : data.from,to : data.to});
                 setFrom(data.from);
                 setTo(data.to)
                 setcallUIState("notification");
             });
 
             socket.current.on('incomingVideoCall', (data) => {
+                setCallType("videocall")
+                setFrom(data.from);
+                setTo(data.to)
                 setcallUIState("notification");
-                setTo(data.from)
             });
 
             socket.current.on('callAccepted', (data) => {

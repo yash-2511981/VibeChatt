@@ -111,6 +111,19 @@ const setupSocket = (server) => {
         }
     };
 
+    const outGoingVideocall = async (data) => {
+        const { from, to } = data;
+        const calleesocketId = userSocketMap.get(to.id);
+        const callersocketId = userSocketMap.get(from.id);
+        if (calleesocketId) {
+            io.to(calleesocketId).emit("incomingVideoCall", data);
+        } else {
+            io.to(callersocketId).emit("callEnded", {
+                message: "Call ended because user disconnected"
+            });
+        }
+    };
+
     const callAccepted = async (data) => {
         const { to, from} = data;
         const callerSocketId = userSocketMap.get(to);
@@ -179,6 +192,7 @@ const setupSocket = (server) => {
         socket.on("disconnect", () => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
+        socket.on("outGoingVideocall", outGoingVideocall);//reusing the same function
         socket.on("call-accepted", callAccepted);
         socket.on("call-rejected", callRejected);
         socket.on("call-ended", endCall);

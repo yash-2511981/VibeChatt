@@ -54,9 +54,10 @@ export const FullscreenCall = () => {
     }, [callStatus]);
 
     const endCurrentCall = () => {
-
+        //for ending call from and to will be different for caller and callee
         let touser = from.id !== userInfo.id ? from.id : to.id
         let fromuser = from.id !== userInfo.id ? to.id : from.id
+
         socket.emit("call-ended", {
             from: fromuser,
             to: touser
@@ -68,8 +69,7 @@ export const FullscreenCall = () => {
         <div className="fixed inset-0 bg-black z-50 flex flex-col">
             <div className="flex-1 relative">
                 {type === 'videocall' && remoteStream ? (
-                    type === "videocall" ?
-                        <video ref={remoteRef} autoPlay playsInline className="w-full h-full object-cover" /> : <audio ref={remoteRef} autoPlay playsInline />
+                    <video ref={remoteRef} autoPlay playsInline className="w-full h-full object-cover" />
                 ) : (
                     <div className="h-full flex flex-col gap-3 items-center justify-center text-white text-xl">
 
@@ -94,6 +94,7 @@ export const FullscreenCall = () => {
                         </div>
                     </div>
                 )}
+                <audio ref={remoteRef} autoPlay playsInline />
 
                 (
                 <div className="absolute bottom-4 right-4 w-32 h-48">

@@ -33,7 +33,7 @@ const CallNotification = () => {
       <div className="bg-blue-600 p-3 text-white flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Phone className="h-4 w-4 animate-pulse" />
-          <span className="font-medium">Incoming Call</span>
+          <span className="font-medium">{type === "videocall" ?  "Incoming Videocall" : "Incoming Voicecall"}</span>
         </div>
       </div>
 

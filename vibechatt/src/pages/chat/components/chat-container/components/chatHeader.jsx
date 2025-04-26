@@ -39,6 +39,25 @@ const ChatHeader = () => {
   const handleOutgoingVideoCall = () => {
     setCallType("videocall")
     setcallUIState("fullscreen")
+    setFrom(userInfo);
+    setTo({
+      id: selectedChatData._id,
+      firstName: selectedChatData.firstName,
+      lastName: selectedChatData.lastName,
+      theme: selectedChatData.theme,
+      image: selectedChatData.image
+    })
+
+    socket.emit("outGoingVideocall", {
+      from: userInfo,
+      to: {
+        id: selectedChatData._id,
+        firstName: selectedChatData.firstName,
+        lastName: selectedChatData.lastName,
+        theme: selectedChatData.theme,
+        image: selectedChatData.image
+      },
+    })
   }
 
   return (
