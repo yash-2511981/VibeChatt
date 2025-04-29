@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus,setCallType } = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -25,7 +25,6 @@ export const SocketProvider = ({ children }) => {
             })
 
             socket.current.on("recieveMessage", (msg) => {
-                // Get latest state when the message is received
                 const { selectedChatType, selectedChatData, addMessage, addContactsInDmContacts } = useAppStore.getState();
 
                 if (!selectedChatData || selectedChatType === undefined) {
@@ -54,44 +53,32 @@ export const SocketProvider = ({ children }) => {
                 addChaannelInChannelList(msg)
             })
 
-            // Call-related event handlers
-            socket.current.on('incomingCall', (data) => {
-                setFrom(data.from);
-                setTo(data.to)
-                setcallUIState("notification");
+
+            socket.current.on('incomingCall', async (data) => {
+                const {to,from,type,} = data;
+                setCallType(type)
+                setFrom(from);
+                setTo(to)
+                setUser(from);
+                setcallUIState("incoming");
             });
 
-            socket.current.on('incomingVideoCall', (data) => {
-                setCallType("videocall")
-                setFrom(data.from);
-                setTo(data.to)
-                setcallUIState("notification");
-            });
-
-            socket.current.on('callAccepted', (data) => {
+            socket.current.on('callAccepted', async (data) => {
                 setCallStatus("ongoing");
+                setcallUIState("fullscreen");
             });
 
-            socket.current.on('callRejected', () => {
+            socket.current.on('call-rejected', () => {
                 endCall();
             });
 
-            socket.current.on('callEnded', () => {
-                endCall();
-            });
-
-            socket.current.on('callFailed', (data) => {
-                endCall();
-            });
-
-            // In your socket event setup:
-            socket.current.on('iceCandidate', (data) => {
-                console.log("Received ICE candidate from peer");
-                handleRemoteICECandidate(data);
-            });
+            socket.current.on()
 
             return () => {
                 socket.current.disconnect()
+                socket.current.off('callEnded')
+                socket.current.off('incomingCall')
+                socket.current.off('callAccepted')
             };
         }
     }, [userInfo])

@@ -111,21 +111,8 @@ const setupSocket = (server) => {
         }
     };
 
-    const outGoingVideocall = async (data) => {
-        const { from, to } = data;
-        const calleesocketId = userSocketMap.get(to.id);
-        const callersocketId = userSocketMap.get(from.id);
-        if (calleesocketId) {
-            io.to(calleesocketId).emit("incomingVideoCall", data);
-        } else {
-            io.to(callersocketId).emit("callEnded", {
-                message: "Call ended because user disconnected"
-            });
-        }
-    };
-
     const callAccepted = async (data) => {
-        const { to, from} = data;
+        const { to, from } = data;
         const callerSocketId = userSocketMap.get(to);
 
         if (callerSocketId) {
@@ -139,41 +126,67 @@ const setupSocket = (server) => {
 
             // Forward acceptance to caller
             io.to(callerSocketId).emit("callAccepted", {
-                from
-            });
-        }
-    };
-
-    const endCall = async (data) => {
-        const { to, from } = data;
-
-        // Clean up call mappings
-        activeCallMap.delete(to);
-        activeCallMap.delete(from);
-
-        const receiverSocketId = userSocketMap.get(to);
-
-        if (receiverSocketId) {
-            io.to(receiverSocketId).emit("callEnded", {
-                from
+                answer: data.answer
             });
         }
     };
 
     const callRejected = async (data) => {
-        const { to, from} = data;
+        const { to } = data;
         const callerSocketId = userSocketMap.get(to);
 
         if (callerSocketId) {
             // Clean up call mappings
             activeCallMap.delete(to);
-            activeCallMap.delete(from);
 
             // Notify caller of rejection
-            io.to(callerSocketId).emit("callRejected", {
-                from,
-                reason:"Call was rejected"
+            io.to(callerSocketId).emit("call-rejected", {
+                reason: "Call was rejected"
             });
+        }
+    };
+
+    const sendIceCandidate = async (socket, data) => {
+        const { to, candidate } = data;
+        console.log(`Sending ICE candidate from ${socket.id} to user ${to}`);
+
+        const toSocketId = userSocketMap.get(to);
+        if (toSocketId) {
+            // Send the candidate directly, not in an object
+            io.to(toSocketId).emit("ice-candidate", candidate);
+            console.log("ICE candidate sent successfully");
+        } else {
+            console.log(`User ${to} is not connected, cannot send ICE candidate`);
+        }
+    };
+
+    // Handle sending offers
+    const sendOffer = async (socket, data) => {
+        const { to, offer } = data;
+        console.log(`Sending offer from ${socket.id} to user ${to}`);
+
+        const toSocketId = userSocketMap.get(to);
+        if (toSocketId) {
+            // Send the offer directly, not in an object
+            io.to(toSocketId).emit("offer", offer);
+            console.log("Offer sent successfully");
+        } else {
+            console.log(`User ${to} is not connected, cannot send offer`);
+        }
+    };
+
+    // Handle sending answers
+    const sendAnswer = async (socket, data) => {
+        const { to, answer } = data;
+        console.log(`Sending answer from ${socket.id} to user ${to}`);
+
+        const toSocketId = userSocketMap.get(to);
+        if (toSocketId) {
+            // Make sure the event name matches the client listener (ans)
+            io.to(toSocketId).emit("ans", answer);
+            console.log("Answer sent successfully");
+        } else {
+            console.log(`User ${to} is not connected, cannot send answer`);
         }
     };
 
@@ -192,10 +205,21 @@ const setupSocket = (server) => {
         socket.on("disconnect", () => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
-        socket.on("outGoingVideocall", outGoingVideocall);//reusing the same function
         socket.on("call-accepted", callAccepted);
         socket.on("call-rejected", callRejected);
-        socket.on("call-ended", endCall);
+
+        //setting up rtc connection
+        socket.on("ice-candidate", (data) => {
+            sendIceCandidate(socket, data);
+        });
+
+        socket.on("offer", (data) => {
+            sendOffer(socket, data);
+        });
+
+        socket.on("answer", (data) => {
+            sendAnswer(socket, data);
+        });
 
         // Handle ICE candidates
         socket.on('iceCandidate', ({ to, from, candidate }) => {

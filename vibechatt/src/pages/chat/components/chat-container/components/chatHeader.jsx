@@ -7,14 +7,20 @@ import { RiCloseFill } from 'react-icons/ri'
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setCallStatus, setFrom, setTo } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType, peer, setCallType, setcallUIState, userInfo, setCallStatus, setFrom, setTo, setUser } = useAppStore();
   const socket = useSocket();
 
-  const handleOutgoingCall = async () => {
-    if (!socket) return;
-    setCallType("voicecall")
-    setcallUIState("fullscreen")
-    setCallStatus("calling")
+  const Calling = async (e) => {
+    const type = e.currentTarget.getAttribute('name');
+    setUser({
+      id: selectedChatData._id,
+      firstName: selectedChatData.firstName,
+      lastName: selectedChatData.lastName,
+      theme: selectedChatData.theme,
+      image: selectedChatData.image
+    })
+    setCallType(type)
+    setcallUIState("outgoing")
     setFrom(userInfo);
     setTo({
       id: selectedChatData._id,
@@ -24,6 +30,7 @@ const ChatHeader = () => {
       image: selectedChatData.image
     })
 
+    if (!socket) return;
     socket.emit("outgoingCall", {
       from: userInfo,
       to: {
@@ -33,30 +40,7 @@ const ChatHeader = () => {
         theme: selectedChatData.theme,
         image: selectedChatData.image
       },
-    })
-  }
-
-  const handleOutgoingVideoCall = () => {
-    setCallType("videocall")
-    setcallUIState("fullscreen")
-    setFrom(userInfo);
-    setTo({
-      id: selectedChatData._id,
-      firstName: selectedChatData.firstName,
-      lastName: selectedChatData.lastName,
-      theme: selectedChatData.theme,
-      image: selectedChatData.image
-    })
-
-    socket.emit("outGoingVideocall", {
-      from: userInfo,
-      to: {
-        id: selectedChatData._id,
-        firstName: selectedChatData.firstName,
-        lastName: selectedChatData.lastName,
-        theme: selectedChatData.theme,
-        image: selectedChatData.image
-      },
+      type
     })
   }
 
@@ -94,12 +78,12 @@ const ChatHeader = () => {
             (<div className='mr-5 gap-10 flex items-center justify-between'>
               <div className="flex items-center justify-end gap-5">
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
-                  <IoVideocam className='text-3xl' onClick={handleOutgoingVideoCall} />
+                  <IoVideocam className='text-3xl' onClick={(e) => Calling(e)} name='videocall' />
                 </button>
               </div>
               <div className="flex items-center justify-end gap-5">
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
-                  <IoCall className='text-3xl' onClick={handleOutgoingCall} />
+                  <IoCall className='text-3xl' onClick={(e) => Calling(e)} name='voicecall' />
                 </button>
               </div>
             </div>
