@@ -11,6 +11,7 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 
 - **Real-Time Communication** – Instant messaging using Socket.io for both direct messages and group chats.
 - **Media Sharing** – Support for sending images and file transfers with delivery tracking.
+- **Video and Audio Call** - realtime video and audio call feature is available
 - **User Authentication** – Secure login system using JWT authentication.
 - **Persistent Storage** – All messages are stored in MongoDB for complete conversation history.
 - **Responsive Design** – Tailwind CSS implementation for a fully responsive UI on all devices.
@@ -23,6 +24,7 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 - **Real-time Communication** - Socket.io
 - **Authentication** - JWT(Json Web Token)
 - **File Handling** - Multer
+- **Video and Audio Call** - webRTC api
 
 ### Installation :-
 
@@ -79,8 +81,7 @@ npm run dev
 ```
 
 ### 🗺️ Roadmap
-
-- Voice and Video call functionality  
+ 
 - Read receipts for messages  
 - End-to-End encryption  
 - Custom themes and UI personalization  
