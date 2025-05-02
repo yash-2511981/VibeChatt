@@ -4,23 +4,23 @@ import { getColor } from "@/lib/utils";
 import { HOST } from "@/utils/constants";
 
 const ContactList = ({ contacts, isChannel = false }) => {
-    const { setSelectedChatType, setSelectedChatData, selectedChatData,setSelectedChatMessage } = useAppStore();
+    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage } = useAppStore();
 
     const handleClick = (contact) => {
-        if(isChannel) setSelectedChatType("channel")
-            else setSelectedChatType("contact")
+        if (isChannel) setSelectedChatType("channel")
+        else setSelectedChatType("contact")
         setSelectedChatData(contact);
-        if(selectedChatData && selectedChatData._id !== contact._id){
+        if (selectedChatData && selectedChatData._id !== contact._id) {
             setSelectedChatMessage([])
         }
-      
+
     }
 
     return (
-        <div className="mt-5">
+        <div className="mt-2  flex flex-col">
             {
                 contacts.map((contact) => (
-                    <div key={contact._id} className={`pl-10 py-2 transition-all duration-300 cursor-pointer ${selectedChatData && selectedChatData._id === contact._id ? "bg-[#8417ff] hover:bg-[#8417ff]" : "hover:bg-[#f1f1f111]"}`} onClick={() => handleClick(contact)}>
+                    <div key={contact._id} className={`mx-5 mb-1 p-2 transition-all duration-300 cursor-pointer rounded-lg ${selectedChatData && selectedChatData._id === contact._id ? "bg-[#8417ff] hover:bg-[#8417ff]" : "hover:bg-[#f1f1f111]"}`} onClick={() => handleClick(contact)}>
                         <div className="flex gap-5 items-center justify-start text-neautral-300">
                             {!isChannel &&
                                 (
@@ -35,6 +35,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                                             contact.email.split("").shift()}
                                                     </div>
                                                 )}
+
                                         </Avatar>
                                     </>
                                 )
@@ -46,7 +47,9 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                 )
                             }
                             {
-                                isChannel ? (<span>{contact.name}</span>) : (<span>{`${contact.firstName} ${contact.lastName}`}</span>)
+                                isChannel ? (<span className="relative">{contact.name}</span>) : (<span className="d-flex">{`${contact.firstName} ${contact.lastName} `}
+                                    <span className="absolute h-2 w-2 rounded-full bg-green-500" hidden={contact.status !== "online"}></span>
+                                </span>)
                             }
                         </div>
                     </div>

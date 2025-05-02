@@ -44,7 +44,7 @@ export const getAllContacts = async (req, res, next) => {
         const contacts = users.map((user) =>
         ({
             label: user.firstName ? `${user.firstName} ${user.lastName}` : user.email,
-            value:user._id
+            value: user._id
         })
         );
 
@@ -103,7 +103,8 @@ export const getContactsDmList = async (req, res, next) => {
                     firstName: "$contactInfo.firstName",
                     lastName: "$contactInfo.lastName",
                     image: "$contactInfo.image",
-                    theme: "$contactInfo.theme"
+                    theme: "$contactInfo.theme",
+                    status: "$contactInfo.status"
                 }
             },
             {

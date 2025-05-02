@@ -18,6 +18,8 @@ const MessageContainer = () => {
   //states to manage the image click and download
   const [showImage, setShowImage] = useState(undefined);
   const [imageUrl, setImageUrl] = useState("")
+  const [loading, setLoading] = useState(true);
+
 
 
   // Fetch messages when chat changes
@@ -36,7 +38,7 @@ const MessageContainer = () => {
 
     const getChannelMsg = async () => {
       try {
-        const response = await apiClient.get(`${GET_CHANNEEL_MSG}/${selectedChatData._id}`,{ withCredentials: true })
+        const response = await apiClient.get(`${GET_CHANNEEL_MSG}/${selectedChatData._id}`, { withCredentials: true })
 
         if (response.status === 200 && response.data.messages) {
           console.log(response.data.messages)
@@ -48,20 +50,19 @@ const MessageContainer = () => {
     }
 
     if (selectedChatData._id && selectedChatType) {
-      if (selectedChatType === "contact"){ getMessages(); console.log("dm")};
-      if (selectedChatType === "channel") {getChannelMsg(); console.log("channel")};
+      if (selectedChatType === "contact") { getMessages(); };
+      if (selectedChatType === "channel") { getChannelMsg(); };
 
     }
   }, [selectedChatType, selectedChatData, setSelectedChatMessage]) // Removed
 
   // Handle scrolling when messages change
   useEffect(() => {
-    if (!isManualScrolling && scrollRef.current) {
+    if (scrollRef.current && !isManualScrolling) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
+      setLoading(false)
     }
   }, [selectedChatMessages, isManualScrolling])
-
-
 
   // Detect manual scrolling by user
   const handleScroll = () => {
@@ -96,7 +97,7 @@ const MessageContainer = () => {
           }
         </div>
       )
-    })
+    });
   };
 
   //fuction for checking the message is image type or not
@@ -165,12 +166,12 @@ const MessageContainer = () => {
                   (<div className="flex items-center justify-center gap-3">
                     <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
                     >
-                      <MdFolderZip/>
+                      <MdFolderZip />
                     </span>
                     <span>{message.fileUrl.split("/").pop()}</span>
                     <span className="bg-black/20 p-3 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 md:text-2xl"
                       onClick={() => downloadFile(message.fileUrl)}>
-                      <IoMdArrowRoundDown className="md:text-2xl"/>
+                      <IoMdArrowRoundDown className="md:text-2xl" />
                     </span>
                   </div>)
               }

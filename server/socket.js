@@ -1,5 +1,6 @@
 import { Server as SocketIoServer } from 'socket.io';
 import Message from './model/MessageModel.js';
+import User from './model/UserModel.js';
 import Channel from './model/channelModel.js';
 
 const setupSocket = (server) => {
@@ -14,11 +15,12 @@ const setupSocket = (server) => {
     const userSocketMap = new Map();
     const activeCallMap = new Map();
 
-    const disconnect = (socket) => {
+    const disconnect = async (socket) => {
         // Find user who disconnected
         let disconnectedUserId = null;
         for (const [userId, socketId] of userSocketMap.entries()) {
             if (socketId === socket.id) {
+                const user = await User.findByIdAndUpdate(userId, { status: 'offline' });
                 disconnectedUserId = userId;
                 userSocketMap.delete(userId);
                 break;
@@ -45,6 +47,7 @@ const setupSocket = (server) => {
         const senderSocketId = userSocketMap.get(message.sender);
         const recieverSocketId = userSocketMap.get(message.reciever);
 
+
         const createdMessage = await Message.create(message);
 
         const messageData = await Message.findById(createdMessage._id)
@@ -52,7 +55,7 @@ const setupSocket = (server) => {
             .populate("reciever", "id email firstName lastName image theme");
 
         [senderSocketId, recieverSocketId].forEach(socketId => {
-            if (socketId) {
+            if (senderSocketId) {
                 io.to(socketId).emit("recieveMessage", messageData);
             }
         });
@@ -190,10 +193,11 @@ const setupSocket = (server) => {
         }
     };
 
-    io.on("connection", (socket) => {
+    io.on("connection", async (socket) => {
         const userId = socket.handshake.query.userId;
 
         if (userId) {
+            await User.findByIdAndUpdate(userId, { status: "online" })
             userSocketMap.set(userId, socket.id);
             console.log(`User connected - ${userId} (Socket ID: ${socket.id})`);
         } else {
@@ -202,7 +206,7 @@ const setupSocket = (server) => {
 
         socket.on("sendMessage", sendMessage);
         socket.on("send-channel-msg", sendChannelMsg);
-        socket.on("disconnect", () => disconnect(socket));
+        socket.on("disconnect", (u) => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
         socket.on("call-accepted", callAccepted);

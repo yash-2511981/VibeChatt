@@ -8,9 +8,12 @@ import { GET_ALL_CHANNELS, GET_ALL_CONTACTS } from "@/utils/constants"
 import { useAppStore } from "@/store"
 import ContactList from "@/components/ui/contact-list"
 import CreateChannels from "./components/createChannel"
+import { HiDotsVertical } from 'react-icons/hi'
+
 
 const ContactsContainer = () => {
   const { setContactList, allContacts, channels, setChannel } = useAppStore();
+  const [listdisplay, setlistdisplay] = useState("contacts");
 
   useEffect(() => {
     const getContacts = async () => {
@@ -33,27 +36,38 @@ const ContactsContainer = () => {
   }, [setChannel, setContactList])
 
   return (
-    <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">
+    <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[25vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">
       <div className="pt-3">
         <Logo />
       </div>
-      <div className="my-5">
-        <div className="flex items-center justify-between pr-10">
-          <Title text="Contacts"/>
-          <NewDm />
+      <div className="mt-4 flex justify-between items-center">
+        <div className="flex items-center justify-start pr-10">
+          <span onClick={() => setlistdisplay("contacts")} className={`${listdisplay === 'contacts' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer`}>
+            <Title text="Contacts" />
+          </span>
+          <span onClick={() => setlistdisplay("groups")} className={`${listdisplay === 'groups' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer`}>
+            <Title text="Groups" />
+          </span>
         </div>
-        <div className="max-h-[30vh] overflow-auto custom-scrollbar">
-          <ContactList contacts={allContacts}/>
+        <div className="text-xl mr-5 text-center">
+          {
+            listdisplay === "contacts" ?
+              <NewDm /> :
+              <CreateChannels />
+          }
         </div>
       </div>
-      <div className="my-5">
-        <div className="flex items-center justify-between pr-10">
-          <Title text="Groups"/>
-          <CreateChannels />
-        </div>
-        <div className="max-h-[40vh] overflow-auto  custom-scrollbar">
-          <ContactList contacts={channels} isChannel={true} />
-        </div>
+      <div className="mt-5">
+        {
+          listdisplay === "contacts" ?
+            <div className="max-h-[30vh] overflow-auto custom-scrollbar mx-2 rounded-lg  py-2">
+              <ContactList contacts={allContacts} />
+            </div>
+            :
+            <div className="max-h-[40vh] overflow-auto  custom-scrollbar">
+              <ContactList contacts={channels} isChannel={true} />
+            </div>
+        }
       </div>
       <ProfileInfo />
     </div>
