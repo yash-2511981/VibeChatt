@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser } = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -55,7 +55,7 @@ export const SocketProvider = ({ children }) => {
 
 
             socket.current.on('incomingCall', async (data) => {
-                const {to,from,type,} = data;
+                const { to, from, type, } = data;
                 setCallType(type)
                 setFrom(from);
                 setTo(to)
@@ -72,7 +72,9 @@ export const SocketProvider = ({ children }) => {
                 endCall();
             });
 
-            socket.current.on()
+            socket.current.on("contact-update", (data) => {
+                updateContactStatus(data);
+            })
 
             return () => {
                 socket.current.disconnect()

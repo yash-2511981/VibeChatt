@@ -20,9 +20,20 @@ const setupSocket = (server) => {
         let disconnectedUserId = null;
         for (const [userId, socketId] of userSocketMap.entries()) {
             if (socketId === socket.id) {
-                const user = await User.findByIdAndUpdate(userId, { status: 'offline' });
+                const updatedUser = await User.findByIdAndUpdate(userId, { status: 'offline', lastActive: new Date() }, { new: true });
                 disconnectedUserId = userId;
                 userSocketMap.delete(userId);
+                socket.broadcast.emit("contact-update", {
+                    _id: updatedUser._id,
+                    email: updatedUser.email,
+                    theme: 0,
+                    profileSetup: true,
+                    firstName: updatedUser.firstName,
+                    lastName: updatedUser.lastName,
+                    image: updatedUser.image,
+                    status: updatedUser.status,
+                    lastActive: updatedUser.lastActive
+                })
                 break;
             }
         }
@@ -151,45 +162,33 @@ const setupSocket = (server) => {
 
     const sendIceCandidate = async (socket, data) => {
         const { to, candidate } = data;
-        console.log(`Sending ICE candidate from ${socket.id} to user ${to}`);
 
         const toSocketId = userSocketMap.get(to);
         if (toSocketId) {
             // Send the candidate directly, not in an object
             io.to(toSocketId).emit("ice-candidate", candidate);
-            console.log("ICE candidate sent successfully");
-        } else {
-            console.log(`User ${to} is not connected, cannot send ICE candidate`);
         }
     };
 
     // Handle sending offers
     const sendOffer = async (socket, data) => {
         const { to, offer } = data;
-        console.log(`Sending offer from ${socket.id} to user ${to}`);
 
         const toSocketId = userSocketMap.get(to);
         if (toSocketId) {
             // Send the offer directly, not in an object
             io.to(toSocketId).emit("offer", offer);
-            console.log("Offer sent successfully");
-        } else {
-            console.log(`User ${to} is not connected, cannot send offer`);
         }
     };
 
     // Handle sending answers
     const sendAnswer = async (socket, data) => {
         const { to, answer } = data;
-        console.log(`Sending answer from ${socket.id} to user ${to}`);
 
         const toSocketId = userSocketMap.get(to);
         if (toSocketId) {
             // Make sure the event name matches the client listener (ans)
             io.to(toSocketId).emit("ans", answer);
-            console.log("Answer sent successfully");
-        } else {
-            console.log(`User ${to} is not connected, cannot send answer`);
         }
     };
 
@@ -197,11 +196,19 @@ const setupSocket = (server) => {
         const userId = socket.handshake.query.userId;
 
         if (userId) {
-            await User.findByIdAndUpdate(userId, { status: "online" })
+            const updatedUser = await User.findByIdAndUpdate(userId, { status: "online" }, { new: true })
             userSocketMap.set(userId, socket.id);
-            console.log(`User connected - ${userId} (Socket ID: ${socket.id})`);
-        } else {
-            console.log("User ID not provided during connection");
+            socket.broadcast.emit("contact-update", {
+                _id: updatedUser._id,
+                email: updatedUser.email,
+                theme: 0,
+                profileSetup: true,
+                firstName: updatedUser.firstName,
+                lastName: updatedUser.lastName,
+                image: updatedUser.image,
+                status: updatedUser.status,
+                lastActive: updatedUser.lastActive
+            })
         }
 
         socket.on("sendMessage", sendMessage);

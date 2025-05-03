@@ -91,7 +91,7 @@ const CreateChannels = () => {
                         />
                     </div>
                     <div>
-                        <Button className="w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300" onClick={createChannle}>Create channel
+                        <Button className="w-full bg-purple-700 hover:bg-purple-900 transition-all duration-300" onClick={createChannle}>Create Group
                         </Button>
                     </div>
                 </DialogContent>

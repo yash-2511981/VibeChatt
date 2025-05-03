@@ -32,7 +32,9 @@ const ContactsContainer = () => {
       }
     };
     getChannels();
+
     getContacts();
+
   }, [setChannel, setContactList])
 
   return (
@@ -42,14 +44,14 @@ const ContactsContainer = () => {
       </div>
       <div className="mt-4 flex justify-between items-center">
         <div className="flex items-center justify-start pr-10">
-          <span onClick={() => setlistdisplay("contacts")} className={`${listdisplay === 'contacts' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer`}>
+          <span onClick={() => setlistdisplay("contacts")} className={`${listdisplay === 'contacts' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer transition-all duration-300`}>
             <Title text="Contacts" />
           </span>
-          <span onClick={() => setlistdisplay("groups")} className={`${listdisplay === 'groups' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer`}>
+          <span onClick={() => setlistdisplay("groups")} className={`${listdisplay === 'groups' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer transition-all duration-300`}>
             <Title text="Groups" />
           </span>
         </div>
-        <div className="text-xl mr-5 text-center">
+        <div className="text-xl mr-5 text-center transition-all duration-300">
           {
             listdisplay === "contacts" ?
               <NewDm /> :
@@ -60,11 +62,11 @@ const ContactsContainer = () => {
       <div className="mt-5">
         {
           listdisplay === "contacts" ?
-            <div className="max-h-[30vh] overflow-auto custom-scrollbar mx-2 rounded-lg  py-2">
+            <div className="overflow-auto custom-scrollbar mx-2 rounded-lg  py-2">
               <ContactList contacts={allContacts} />
             </div>
             :
-            <div className="max-h-[40vh] overflow-auto  custom-scrollbar">
+            <div className="overflow-auto custom-scrollbar mx-2 rounded-lg  py-2">
               <ContactList contacts={channels} isChannel={true} />
             </div>
         }

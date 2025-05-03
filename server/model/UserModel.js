@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { mongo, now } from "mongoose";
 import { hash, genSalt } from 'bcrypt'
 
 const userSchema = new mongoose.Schema({
@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     image: { type: String, required: false },
     theme: { type: Number, default: 0 },
     profileSetup: { type: Boolean, default: false },
-    status: { type: String, default: "online" }
+    status: { type: String, default: "online" },
+    lastActive: { type: String, default: Date.now },
 });
 
 

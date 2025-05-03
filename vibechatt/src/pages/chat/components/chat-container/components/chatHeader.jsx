@@ -2,13 +2,16 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { useSocket } from '@/context/SocketContext';
 import { useAppStore } from '@/store'
 import { HOST } from '@/utils/constants';
+import moment from 'moment';
+import { useEffect, useState } from 'react';
 import { IoCall, IoVideocam } from 'react-icons/io5';
 import { RiCloseFill } from 'react-icons/ri'
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType, peer, setCallType, setcallUIState, userInfo, setCallStatus, setFrom, setTo, setUser } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setFrom, setTo, setUser, setSelectedChatData } = useAppStore();
   const socket = useSocket();
+  const [status, setstatus] = useState();
 
   const Calling = async (e) => {
     const type = e.currentTarget.getAttribute('name');
@@ -44,6 +47,35 @@ const ChatHeader = () => {
     })
   }
 
+  const formatLastActive = (lastActive) => {
+    const now = moment();
+    const last = moment(lastActive);
+    const diffInHr = now.diff(last, "hours");
+    const diffInDay = now.diff(last, "days");
+
+    if (diffInHr < 24) {
+      return last.fromNow();
+    } else if (diffInDay < 7) {
+      return last.format("dddd h:mm A");
+    } else {
+      return last.format("MMM D, h:mm A");
+    }
+  }
+
+  useEffect(() => {
+    const handleStatusChange = () => {
+      if (selectedChatData.status === "online") {
+        setstatus(selectedChatData.status)
+      } else {
+        const lastActive = formatLastActive(selectedChatData.lastActive);
+        setstatus(lastActive)
+      }
+    }
+    handleStatusChange();
+  }, [selectedChatData])
+
+
+
   return (
     <div className="h-[10vh] border-b-2 border-[#2f303b] flex items-center justify-between px-5">
       <div className="flex gap-5 items-center ">
@@ -68,6 +100,11 @@ const ChatHeader = () => {
             {
               selectedChatData.firstName && selectedChatData.lastName ?
                 `${selectedChatData.firstName} ${selectedChatData.lastName}` : selectedChatData.email
+            }
+          </span>
+          <span>
+            {
+              status
             }
           </span>
         </div>

@@ -104,7 +104,8 @@ export const getContactsDmList = async (req, res, next) => {
                     lastName: "$contactInfo.lastName",
                     image: "$contactInfo.image",
                     theme: "$contactInfo.theme",
-                    status: "$contactInfo.status"
+                    status: "$contactInfo.status",
+                    lastActive:"$contactInfo.lastActive"
                 }
             },
             {

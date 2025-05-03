@@ -10,7 +10,7 @@ export const createChatSlice = (set, get) => ({
     fileUploadProgress: 0,
     fileDownloadProgress: 0,
     channels: [],
-    
+
     // Existing methods
     setChannel: (channels) => set({ channels }),
     addChannel: (channel) => {
@@ -29,7 +29,7 @@ export const createChatSlice = (set, get) => ({
     addMessage: (msg) => {
         const selectedChatMessages = get().selectedChatMessages;
         const selectedChatType = get().selectedChatType;
-        
+
         set({
             selectedChatMessages: [
                 ...selectedChatMessages, {
@@ -46,7 +46,7 @@ export const createChatSlice = (set, get) => ({
         const index = channels.findIndex(
             (c) => c._id === message.channelId
         );
-        
+
         if (index !== -1 && index !== undefined) {
             channels.splice(index, 1);
             channels.unshift(data);
@@ -59,16 +59,28 @@ export const createChatSlice = (set, get) => ({
         const dmContacts = get().allContacts;
         const data = dmContacts.find((c) => c._id === fromId);
         const index = dmContacts.findIndex((c) => c._id === fromId);
-        
+
         if (index !== -1 && index !== undefined) {
             dmContacts.splice(index, 1);
             dmContacts.unshift(data);
         } else {
             dmContacts.unshift(fromData);
         }
-        
+
         set({ allContacts: dmContacts });
     },
-    
-  
+    updateContactStatus: (data) => {
+        const contacts = get().allContacts;
+        const index = contacts.findIndex((c) => c._id === data._id);
+        if (index === -1) return;
+
+        contacts[index] = data;
+
+        set({ allContacts: contacts });
+
+        if (get().selectedChatData._id === data._id) {
+            set({ selectedChatData: data })
+        }
+    }
+
 });

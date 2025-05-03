@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaSearch } from 'react-icons/fa';
 import { Input } from '@/components/ui/input';
 import Lottie from 'react-lottie';
 import { animationDefaultOptions, getColor } from '@/lib/utils';
@@ -19,7 +19,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { useAppStore } from '@/store';
 
 const NewDm = () => {
-    const {setSelectedChatType, setSelectedChatData } = useAppStore();
+    const { setSelectedChatType, setSelectedChatData } = useAppStore();
     const [openNewContactModal, setOpenNewContactModal] = useState(false)
     const [searchedContact, setSearchedContact] = useState([]);
 
@@ -51,10 +51,10 @@ const NewDm = () => {
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger>
-                        <FaPlus className='text-neutral-400 font-light text-opacity-90 text-start hover:text-neutral-100 cursor-pointer transition-all duration-300' onClick={() => setOpenNewContactModal(true)} />
+                        <FaSearch className='text-neutral-400 font-light text-opacity-90 text-start hover:text-neutral-100 cursor-pointer transition-all duration-300' onClick={() => setOpenNewContactModal(true)} />
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Select New Contact</p>
+                        <p>Search User</p>
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
