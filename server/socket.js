@@ -59,11 +59,13 @@ const setupSocket = (server) => {
         const recieverSocketId = userSocketMap.get(message.reciever);
 
 
-        const createdMessage = await Message.create(message);
+        const newMessage = recieverSocketId ? { ...message, status: "recieved" } : message
+
+        const createdMessage = await Message.create(newMessage);
 
         const messageData = await Message.findById(createdMessage._id)
             .populate("sender", "id email firstName lastName image theme")
-            .populate("reciever", "id email firstName lastName image theme");
+            .populate("reciever", "id email firstName lastName image theme ");
 
         [senderSocketId, recieverSocketId].forEach(socketId => {
             if (senderSocketId) {

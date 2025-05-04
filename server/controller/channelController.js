@@ -42,7 +42,10 @@ export const getAllChannels = async (req, res) => {
         const userId = new mongoose.Types.ObjectId(req.userId);
         const channels = await Channel.find({
             $or: [{ admin: userId }, { members: userId }],
-        }).sort({ updatedAt: -1 })
+        })
+        .sort({ updatedAt: -1 })
+        .populate("members","firstName lastName")
+        .populate("admin","firstName lastName")
 
 
         return res.status(200).json({ channels });

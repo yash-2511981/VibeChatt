@@ -45,7 +45,7 @@ const ContactsContainer = () => {
       <div className="mt-4 flex justify-between items-center">
         <div className="flex items-center justify-start pr-10">
           <span onClick={() => setlistdisplay("contacts")} className={`${listdisplay === 'contacts' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer transition-all duration-300`}>
-            <Title text="Contacts" />
+            <Title text="Chats" />
           </span>
           <span onClick={() => setlistdisplay("groups")} className={`${listdisplay === 'groups' ? "bg-green-500 text-white" : "bg-gray-700 text-neutral-400"} ml-2 p-2 rounded-full cursor-pointer transition-all duration-300`}>
             <Title text="Groups" />

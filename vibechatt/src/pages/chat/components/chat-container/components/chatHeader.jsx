@@ -102,11 +102,21 @@ const ChatHeader = () => {
                 `${selectedChatData.firstName} ${selectedChatData.lastName}` : selectedChatData.email
             }
           </span>
-          <span>
+          <div>
             {
-              status
+              selectedChatType === "contact" ? (
+                <span className='text-neutral-500'>
+                  {status}
+                </span>
+              ) : (
+                selectedChatData.members.map((member, index) => (
+                  <span key={member._id} className='text-neutral-500'>
+                    {`${member.firstName} ${member.lastName}${index < selectedChatData.members.length - 1 ? ',' : ''} `}
+                  </span>
+                ))
+              )
             }
-          </span>
+          </div>
         </div>
       </div>
       {

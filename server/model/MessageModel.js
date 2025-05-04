@@ -10,29 +10,33 @@ const messageSchema = new mongoose.Schema({
         ref: "User",
         required: false,
     },
-    messageType:{
-        type:String,
-        enum:["text","file"],
-        required:true
-    }, 
-    content:{
-        type:String,
+    messageType: {
+        type: String,
+        enum: ["text", "file"],
+        required: true
+    },
+    content: {
+        type: String,
         required: function () {
             return this.messageType === "text"
         }
     },
-    fileUrl:{
-        type:String,
+    fileUrl: {
+        type: String,
         required: function () {
             return this.messageType === "file"
         }
     },
-    timestamp :{
-        type:Date,
-        default:Date.now
+    timestamp: {
+        type: Date,
+        default: Date.now
+    },
+    status: {
+        type: String,
+        default: "sent"
     }
 })
 
-const Message = mongoose.model("Message",messageSchema);
+const Message = mongoose.model("Message", messageSchema);
 
 export default Message;

@@ -47,9 +47,10 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                 )
                             }
                             {
-                                isChannel ? (<span className="relative">{contact.name}</span>) : (<span className="d-flex">{`${contact.firstName} ${contact.lastName} `}
-                                    <span className="absolute h-2 w-2 rounded-full bg-green-500" hidden={contact.status !== "online"}></span>
-                                </span>)
+                                isChannel ? (<span className="">{contact.name}</span>) :
+                                    (<span className="d-flex relative">{`${contact.firstName} ${contact.lastName} `}
+                                        <span className="absolute  h-2 w-2 rounded-full bg-green-500" hidden={contact.status !== "online"}></span>
+                                    </span>)
                             }
                         </div>
                     </div>
