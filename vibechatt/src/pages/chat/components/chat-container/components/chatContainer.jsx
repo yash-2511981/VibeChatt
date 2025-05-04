@@ -8,6 +8,8 @@ import { IoMdArrowRoundDown } from 'react-icons/io'
 import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getColor } from "@/lib/utils";
+import { FaCheck, FaCheckDouble } from "react-icons/fa";
+import { BiCheck, BiCheckDouble } from "react-icons/bi";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -133,9 +135,21 @@ const MessageContainer = () => {
         {
           message.messageType === "text" && (
             <div className={`${message.sender !== selectedChatData._id
-              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-4 rounded my-1 max-w-[50%] break-words`}>
-              {message.content}
+              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}>
+              <div className="flex items-center">
+                <div className="mr-2">
+                  {message.content}
+                </div>
+                <div className={`text-[10px] text-gray-600 flex items-end justify-end items-center h-[30px]`}>
+                  {moment(message.timestamp).format("LT")}
+                  {message.sender === userInfo.id && <span className="ml-1">
+                    {message.status == "sent" && <BiCheck className="text-[13px]" />}
+                    {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
+                    {message.status == "seen" && <BiCheckDouble className="text-[13px] bg-[#34B7F1]" />}
+                  </span>}
+                </div>
+              </div>
             </div>
           )
         }
@@ -178,23 +192,32 @@ const MessageContainer = () => {
             </div>
           )
         }
-        <div className="text-xs text-gray-600">
-          {moment(message.timestamp).format("LT")}
-        </div>
+
       </div>
     )
   }
 
   const renderChannelMsg = (message) => {
-    console.log(message)
     return (
       <div className={`mt-5 ${message.sender._id !== userInfo.id ? "text-left" : "text-right"}`}>
         {
           message.messageType === "text" && (
             <div className={`${message.sender._id === userInfo.id
-              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-4 rounded my-1 max-w-[50%] break-words ml-10`}>
-              {message.content}
+              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 ml-10 max-w-[50%] break-words`}>
+              <div className="flex items-center">
+                <div className="mr-2">
+                  {message.content}
+                </div>
+                <div className={`text-[10px] text-gray-600 flex items-end justify-end items-center h-[30px]`}>
+                  {moment(message.timestamp).format("LT")}
+                  {message.sender._id === userInfo.id && <span className="ml-1">
+                    {message.status == "sent" && <BiCheck className="text-[13px]" />}
+                    {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
+                    {message.status == "seen" && <BiCheckDouble className="text-[13px] bg-[#34B7F1]" />}
+                  </span>}
+                </div>
+              </div>
             </div>
           )
         }
@@ -238,27 +261,19 @@ const MessageContainer = () => {
           )
         }
         {
-          message.sender._id !== userInfo.id ?
-            (<div className="flex items-center justify-start gap-3">
-              <Avatar className='h-8 w-8 rounded-full overflow-hidden'>
-                {message.sender.image && (<AvatarImage src={`${HOST}/${message.sender.image}`} alt="profile" className='object-cover w-full h-full bg-black' />)}
-                <AvatarFallback className={`uppercase h-8 w-8 text text-lg flex items-center justify-center rounded-full ${getColor(message.sender.theme)}`}>
-                  {message.sender.firstName ?
-                    message.sender.firstName.split("").shift() :
-                    message.sender.email.split("").shift()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-sm text-white/60">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
-              <span className="text-ss text-white/60">
-                {moment(message.timestamp).format("LT")}
-              </span>
-            </div>
-            ) :
-            (
-              <div className="text-ss text-white/60">
-                {moment(message.timestamp).format("LT")}
-              </div>
-            )
+          message.sender._id !== userInfo.id &&
+          (<div className="flex items-center justify-start gap-3">
+            <Avatar className='h-8 w-8 rounded-full overflow-hidden'>
+              {message.sender.image && (<AvatarImage src={`${HOST}/${message.sender.image}`} alt="profile" className='object-cover w-full h-full bg-black' />)}
+              <AvatarFallback className={`uppercase h-8 w-8 text text-lg flex items-center justify-center rounded-full ${getColor(message.sender.theme)}`}>
+                {message.sender.firstName ?
+                  message.sender.firstName.split("").shift() :
+                  message.sender.email.split("").shift()}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-white/60">{`${message.sender.firstName} ${message.sender.lastName}`}</span>
+          </div>
+          )
         }
 
       </div>
