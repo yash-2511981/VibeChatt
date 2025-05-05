@@ -109,11 +109,16 @@ const ChatHeader = () => {
                   {status}
                 </span>
               ) : (
-                selectedChatData.members.map((member, index) => (
-                  <span key={member._id} className='text-neutral-500'>
-                    {`${member.firstName} ${member.lastName}${index < selectedChatData.members.length - 1 ? ',' : ''} `}
-                  </span>
-                ))
+                <div className='text-neutral-500'>
+                  {selectedChatData.admin._id !== userInfo.id && `${selectedChatData.admin.firstName} ${selectedChatData.admin.lastName}, `}
+                  {selectedChatData.members
+                    .filter(member => userInfo.id !== member._id)
+                    .map((member, index,arr) => (
+                      <span key={member._id}>
+                        {`${member.firstName} ${member.lastName}${index < arr.length - 1 ? ',' : ''} `}
+                      </span>
+                    ))}
+                </div>
               )
             }
           </div>

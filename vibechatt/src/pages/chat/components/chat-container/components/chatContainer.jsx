@@ -136,13 +136,15 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}>
-              <div className="flex items-center">
-                <div className="mr-2">
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 max-w-[50%] break-words`}>
+              <div className="flex items-center h-full">
+                <div className="mr-2 p-2">
                   {message.content}
                 </div>
-                <div className={`text-[10px] text-gray-600 flex items-end justify-end items-center h-[30px]`}>
-                  {moment(message.timestamp).format("LT")}
+                <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] mr-1 mb-1`}>
+                  <span>
+                    {moment(message.timestamp).format("LT")}
+                  </span>
                   {message.sender === userInfo.id && <span className="ml-1">
                     {message.status == "sent" && <BiCheck className="text-[13px]" />}
                     {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
@@ -204,17 +206,15 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender._id === userInfo.id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 ml-10 max-w-[50%] break-words`}>
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 ml-10 max-w-[50%] break-words`}>
               <div className="flex items-center">
-                <div className="mr-2">
+                <div className="mr-2 p-2">
                   {message.content}
                 </div>
-                <div className={`text-[10px] text-gray-600 flex items-end justify-end items-center h-[30px]`}>
+                <div className={`text-[10px] text-gray-600 flex items-end justify-center h-[40px] mr-1 mb-1`}>
                   {moment(message.timestamp).format("LT")}
                   {message.sender._id === userInfo.id && <span className="ml-1">
                     {message.status == "sent" && <BiCheck className="text-[13px]" />}
-                    {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
-                    {message.status == "seen" && <BiCheckDouble className="text-[13px] bg-[#34B7F1]" />}
                   </span>}
                 </div>
               </div>
