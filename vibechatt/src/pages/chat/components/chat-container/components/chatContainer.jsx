@@ -19,7 +19,6 @@ const MessageContainer = () => {
   //states to manage the image click and download
   const [showImage, setShowImage] = useState(undefined);
   const [imageUrl, setImageUrl] = useState("")
-  const [loading, setLoading] = useState(true);
 
 
 
@@ -42,7 +41,6 @@ const MessageContainer = () => {
         const response = await apiClient.get(`${GET_CHANNEEL_MSG}/${selectedChatData._id}`, { withCredentials: true })
 
         if (response.status === 200 && response.data.messages) {
-          console.log(response.data.messages)
           setSelectedChatMessage(response.data.messages)
         }
       } catch (error) {
@@ -61,7 +59,6 @@ const MessageContainer = () => {
   useEffect(() => {
     if (scrollRef.current && !isManualScrolling) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
-      setLoading(false)
     }
   }, [selectedChatMessages, isManualScrolling])
 
@@ -158,7 +155,7 @@ const MessageContainer = () => {
           message.messageType === "file" && (
             <div className={`${message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words `}
             >
               {
                 checkImage(message.fileUrl) ?
@@ -176,9 +173,19 @@ const MessageContainer = () => {
                       <IoMdArrowRoundDown className="text-white text-xl " />
                     </button>
                     <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
+                    <div className={`text-[10px] text-white/ flex items-end justify-end absolute bottom-1 right-0`}>
+                      <span className="text-white/100">
+                        {moment(message.timestamp).format("LT")}
+                      </span>
+                      {message.sender === userInfo.id && <span className="ml-1">
+                        {message.status == "sent" && <BiCheck className="text-[13px] text-white/100" />}
+                        {message.status == "recieved" && <BiCheckDouble className="text-[13px] text-white/100" />}
+                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
+                      </span>}
+                    </div>
                   </div>)
                   :
-                  (<div className="flex items-center justify-center gap-3">
+                  (<div className="flex items-center justify-center gap-3 mb-2 p-2 bg-black/20 rounded-lg relative">
                     <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
                     >
                       <MdFolderZip />
@@ -188,6 +195,16 @@ const MessageContainer = () => {
                       onClick={() => downloadFile(message.fileUrl)}>
                       <IoMdArrowRoundDown className="md:text-2xl" />
                     </span>
+                    <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] bottom-[-14px] right-[-5px] absolute`}>
+                      <span>
+                        {moment(message.timestamp).format("LT")}
+                      </span>
+                      {message.sender === userInfo.id && <span className="ml-1">
+                        {message.status == "sent" && <BiCheck className="text-[13px]" />}
+                        {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
+                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
+                      </span>}
+                    </div>
                   </div>)
               }
             </div>
@@ -210,8 +227,10 @@ const MessageContainer = () => {
                 <div className="mr-2 p-2">
                   {message.content}
                 </div>
-                <div className={`text-[10px] text-gray-600 flex items-end justify-center h-[40px] mr-1 mb-1`}>
-                  {moment(message.timestamp).format("LT")}
+                <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] mr-1 mb-1`}>
+                  <span>
+                    {moment(message.timestamp).format("LT")}
+                  </span>
                   {message.sender._id === userInfo.id && <span className="ml-1">
                     {message.status == "sent" && <BiCheck className="text-[13px]" />}
                   </span>}
@@ -242,9 +261,19 @@ const MessageContainer = () => {
                       <IoMdArrowRoundDown className="text-white text-3xl" />
                     </button>
                     <img src={`${HOST}/${message.fileUrl}`} height={300} width={300} />
+                    <div className={`text-[10px] text-white/ flex items-end justify-end absolute bottom-1 right-0`}>
+                      <span className="text-white/100">
+                        {moment(message.timestamp).format("LT")}
+                      </span>
+                      {message.sender._id === userInfo.id && <span className="ml-1">
+                        {message.status == "sent" && <BiCheck className="text-[13px] text-white/100" />}
+                        {message.status == "recieved" && <BiCheckDouble className="text-[13px] text-white/100" />}
+                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
+                      </span>}
+                    </div>
                   </div>)
                   :
-                  (<div className="flex items-center justify-center gap-3">
+                  (<div className="flex items-center justify-center gap-3 mb-2 p-2 bg-black/20 rounded-lg relative">
                     <span className="text-white/8 text-sm bg-black/20 rounded-full p-3"
                     >
                       <MdFolderZip />
@@ -252,8 +281,18 @@ const MessageContainer = () => {
                     <span>{message.fileUrl.split("/").pop()}</span>
                     <span className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
                       onClick={() => downloadFile(message.fileUrl)}>
-                      <IoMdArrowRoundDown className="text-3xl" />
+                      <IoMdArrowRoundDown className="text-2xl" />
                     </span>
+                    <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] bottom-[-14px] right-[-5px] absolute`}>
+                      <span>
+                        {moment(message.timestamp).format("LT")}
+                      </span>
+                      {message.sender._id === userInfo.id && <span className="ml-1">
+                        {message.status == "sent" && <BiCheck className="text-[13px]" />}
+                        {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
+                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
+                      </span>}
+                    </div>
                   </div>)
               }
             </div>

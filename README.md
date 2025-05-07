@@ -9,7 +9,7 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 
 ## ✨ Features
 
-- **💬 Real-Time Messaging**  
+- **💬 Real-Time Messaging**
   Seamless instant messaging powered by **Socket.io**, supporting both **one-on-one** and **group chats**.
 
 - **📍 Message Receipts**  
