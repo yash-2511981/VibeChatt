@@ -7,14 +7,28 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 
 ---
 
-### 🚀 Features
+## ✨ Features
 
-- **Real-Time Communication** – Instant messaging using Socket.io for both direct messages and group chats.
-- **Media Sharing** – Support for sending images and file transfers with delivery tracking.
-- **Video and Audio Call** - realtime video and audio call feature is available
-- **User Authentication** – Secure login system using JWT authentication.
-- **Persistent Storage** – All messages are stored in MongoDB for complete conversation history.
-- **Responsive Design** – Tailwind CSS implementation for a fully responsive UI on all devices.
+- **💬 Real-Time Messaging**  
+  Seamless instant messaging powered by **Socket.io**, supporting both **one-on-one** and **group chats**.
+
+- **📍 Message Receipts**  
+  Real-time updates for message status: `sent`, `received`, and `seen`, ensuring reliable delivery feedback for users.
+
+- **🖼️ Media Sharing**  
+  Share images and files easily with real-time delivery tracking and status updates.
+
+- **📞 Video & Audio Calling**  
+  High-quality, real-time **video and audio call** functionality built using WebRTC.
+
+- **🔐 Secure Authentication**  
+  User login and authentication handled via **JWT**, ensuring secure and persistent sessions.
+
+- **🗂️ Persistent Message Storage**  
+  All messages are stored in **MongoDB**, preserving full conversation history.
+
+- **📱 Fully Responsive UI**  
+  Built with **Tailwind CSS** for a sleek, modern, and fully responsive design across all devices.
 
 ### Tech Stack
 
@@ -48,21 +62,27 @@ npm install
 ```
 
 3.Set up the environment variables:
+
 - Create a .env file in the server directory with the following variables:
+
 ```
 PORT = 3000
 JWT_KEY = "YOUR_JWT_SECRET"
 ORIGIN = "http://localhost:5173"
 DATABASE_URL = your_mongodb_connection_string
 ```
+
 - create a .env file in the client directory(vibechatt) with the following variables:
+
 ```bash
 VITE_SERVER_URL="YOUR_SERVER_URL"
-#example: VITE_SERVER_URL="http://localhost:3000" 
+#example: VITE_SERVER_URL="http://localhost:3000"
 ```
 
 4.start the development server
-- start front-end and back-end individually 
+
+- start front-end and back-end individually
+
 ```bash
 # start backend server
 cd server
@@ -74,6 +94,7 @@ npm run dev
 ```
 
 - start client and server concurrently
+
 ```bash
 #run both server and clien at once inside chatApp
 npm install
@@ -81,10 +102,8 @@ npm run dev
 ```
 
 ### 🗺️ Roadmap
- 
-- Read receipts for messages  
-- End-to-End encryption  
-- Custom themes and UI personalization  
+
+- sending audio recordings
 
 ---
 
@@ -93,4 +112,3 @@ npm run dev
 _Yash Shetye_
 
 > Built with ❤️ to keep your conversations flowing in real time.
-
