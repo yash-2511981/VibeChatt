@@ -4,8 +4,7 @@ import { FullscreenCall } from "./component/call-fullscreen";
 
 export const CallUI = () => {
   const { callUIState } = useAppStore();
-  console.log(callUIState)
-  if (callUIState === 'incoming'|| callUIState === 'outgoing') return <CallNotification />;
+  if (callUIState === 'incoming' || callUIState === 'outgoing') return <CallNotification />;
   if (callUIState === 'fullscreen') return <FullscreenCall />;
   return null;
 };

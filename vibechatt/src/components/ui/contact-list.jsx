@@ -2,14 +2,23 @@ import { useAppStore } from "@/store"
 import { Avatar, AvatarImage } from "./avatar";
 import { getColor } from "@/lib/utils";
 import { HOST } from "@/utils/constants";
+import { useSocket } from "@/context/SocketContext";
 
 const ContactList = ({ contacts, isChannel = false }) => {
-    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage } = useAppStore();
+    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
+    const socket = useSocket();
 
     const handleClick = (contact) => {
-        if (isChannel) setSelectedChatType("channel")
-        else setSelectedChatType("contact")
-        setSelectedChatData(contact);
+        if (isChannel) {
+            setSelectedChatType("channel")
+        } else {
+            setSelectedChatType("contact")
+            setSelectedChatData(contact);
+            socket.emit("update-unseen-msg", {
+                user1: userInfo.id,
+                user2: contact._id
+            })
+        }
         if (selectedChatData && selectedChatData._id !== contact._id) {
             setSelectedChatMessage([])
         }

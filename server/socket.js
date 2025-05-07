@@ -67,12 +67,51 @@ const setupSocket = (server) => {
             .populate("sender", "id email firstName lastName image theme")
             .populate("reciever", "id email firstName lastName image theme ");
 
-        [senderSocketId, recieverSocketId].forEach(socketId => {
-            if (senderSocketId) {
-                io.to(socketId).emit("recieveMessage", messageData);
-            }
-        });
+        if (recieverSocketId) {
+            io.to(recieverSocketId).emit("recieveMessage", messageData);
+        }
+        if (recieverSocketId) {
+            io.to(recieverSocketId).emit("new-msg", createdMessage);
+        }
+
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("recieveMessage", messageData);
+        }
+
     };
+
+    const msgSeen = async (data) => {
+        const { _id, sender } = data;
+        const senderSocketId = userSocketMap.get(sender);
+        const msg = await Message.findByIdAndUpdate(_id, { status: "seen" }, { new: true })
+        if (senderSocketId) {
+            io.to(senderSocketId).emit("msg-seen", msg)
+        }
+    }
+
+    const updateUnseenMessages = async (data) => {
+        const { user1, user2 } = data;
+
+        const receiverSocketId = userSocketMap.get(user2);
+
+        try {
+            await Message.updateMany(
+                {
+                    reciever: user1,
+                    sender: user2,
+                    status: { $in: ["recieved", "sent"] }
+                },
+                {
+                    $set: { status: "seen" }
+                }
+            )
+
+            io.to(receiverSocketId).emit("update-current-chat-msg", { id: user1 })
+        } catch (err) {
+            console.error("Error updating message status:", err);
+        }
+    };
+
 
     const sendChannelMsg = async (message) => {
         const { channelId, sender, content, messageType, fileUrl } = message;
@@ -194,6 +233,16 @@ const setupSocket = (server) => {
         }
     };
 
+    const handleIceCandidate = ({ to, from, candidate }) => {
+        const receiverSocketId = userSocketMap.get(to);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('iceCandidate', {
+                from,
+                candidate
+            });
+        }
+    }
+
     io.on("connection", async (socket) => {
         const userId = socket.handshake.query.userId;
 
@@ -235,15 +284,10 @@ const setupSocket = (server) => {
         });
 
         // Handle ICE candidates
-        socket.on('iceCandidate', ({ to, from, candidate }) => {
-            const receiverSocketId = userSocketMap.get(to);
-            if (receiverSocketId) {
-                io.to(receiverSocketId).emit('iceCandidate', {
-                    from,
-                    candidate
-                });
-            }
-        });
+        socket.on('iceCandidate', handleIceCandidate);
+
+        socket.on("msg-seen", msgSeen);
+        socket.on("update-unseen-msg", updateUnseenMessages);
     });
 };
 

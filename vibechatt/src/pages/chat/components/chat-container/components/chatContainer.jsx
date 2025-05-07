@@ -8,14 +8,13 @@ import { IoMdArrowRoundDown } from 'react-icons/io'
 import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getColor } from "@/lib/utils";
-import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { BiCheck, BiCheckDouble } from "react-icons/bi";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
   const containerRef = useRef();
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const { userInfo, selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading } = useAppStore()
+  const { userInfo, selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading, updateMessageStatus, updateCurrentChatMessage } = useAppStore()
 
   //states to manage the image click and download
   const [showImage, setShowImage] = useState(undefined);
@@ -56,7 +55,7 @@ const MessageContainer = () => {
       if (selectedChatType === "channel") { getChannelMsg(); };
 
     }
-  }, [selectedChatType, selectedChatData, setSelectedChatMessage]) // Removed
+  }, [selectedChatType, selectedChatData, setSelectedChatMessage, updateMessageStatus, updateCurrentChatMessage]) // Removed
 
   // Handle scrolling when messages change
   useEffect(() => {
@@ -148,7 +147,7 @@ const MessageContainer = () => {
                   {message.sender === userInfo.id && <span className="ml-1">
                     {message.status == "sent" && <BiCheck className="text-[13px]" />}
                     {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
-                    {message.status == "seen" && <BiCheckDouble className="text-[13px] bg-[#34B7F1]" />}
+                    {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
                   </span>}
                 </div>
               </div>

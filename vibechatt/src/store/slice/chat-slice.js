@@ -40,6 +40,15 @@ export const createChatSlice = (set, get) => ({
             ]
         });
     },
+    updateMessageStatus: (message) => {
+        console.log("updating msg status")
+        const index = get().selectedChatMessages.findIndex(msg => msg._id === message._id);
+        const messages = get().selectedChatMessages
+
+        messages[index] = message;
+
+        set({ selectedChatMessages: messages });
+    },
     addChaannelInChannelList: (message) => {
         const channels = get().channels;
         const data = channels.find((c) => c._id === message.channelId);
@@ -51,6 +60,13 @@ export const createChatSlice = (set, get) => ({
             channels.splice(index, 1);
             channels.unshift(data);
         }
+    },
+    updateCurrentChatMessage: () => {
+        set(state => ({
+            selectedChatMessages: state.selectedChatMessages.map(msg =>
+                msg.status === "recieved" || msg.status === "sent" ? { ...msg, status: "seen" } : msg
+            )
+        }))
     },
     addContactsInDmContacts: (message) => {
         const userId = get().userInfo.id;
@@ -78,7 +94,7 @@ export const createChatSlice = (set, get) => ({
 
         set({ allContacts: contacts });
 
-        if (get().selectedChatData._id === data._id) {
+        if (get().selectedChatData && get().selectedChatData._id === data._id) {
             set({ selectedChatData: data })
         }
     }
