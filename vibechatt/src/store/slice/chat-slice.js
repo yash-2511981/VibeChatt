@@ -43,7 +43,7 @@ export const createChatSlice = (set, get) => ({
     updateMessageStatus: (message) => {
         console.log("updating msg status")
         const index = get().selectedChatMessages.findIndex(msg => msg._id === message._id);
-        const messages = get().selectedChatMessages
+        const messages = get().selectedChatMessages;
 
         messages[index] = message;
 

@@ -14,16 +14,16 @@ export const colors = [
   "bg-[#4cc9f02a] text-[#4cc9f0] border-[1px] border-[#4cc9f0bb]",
 ]
 
-export const getColor = (color) =>{
-  if(color >= 0 && color <= colors.length){
+export const getColor = (color) => {
+  if (color >= 0 && color <= colors.length) {
     return colors[color];
   }
   return colors[0];
 }
 
 export const animationDefaultOptions = {
-  loop:true,
-  autoplay:true,
+  loop: true,
+  autoplay: true,
   animationData
 }
 

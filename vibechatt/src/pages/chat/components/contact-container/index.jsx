@@ -4,15 +4,14 @@ import NewDm from "./components/newdm"
 import ProfileInfo from "./components/profileInfo"
 import Title from "./components/title"
 import { apiClient } from "@/lib/api-client"
-import { GET_ALL_CHANNELS, GET_ALL_CONTACTS } from "@/utils/constants"
+import { GET_ALL_CHANNELS, GET_ALL_CONTACTS, GET_UNSEEN_MSG } from "@/utils/constants"
 import { useAppStore } from "@/store"
 import ContactList from "@/components/ui/contact-list"
 import CreateChannels from "./components/createChannel"
-import { HiDotsVertical } from 'react-icons/hi'
 
 
 const ContactsContainer = () => {
-  const { setContactList, allContacts, channels, setChannel } = useAppStore();
+  const { setContactList, allContacts, channels, setChannel, selectedChatData, selectedChatMessage } = useAppStore();
   const [listdisplay, setlistdisplay] = useState("contacts");
 
   useEffect(() => {
@@ -34,11 +33,10 @@ const ContactsContainer = () => {
     getChannels();
 
     getContacts();
-
-  }, [setChannel, setContactList])
+  }, [setChannel, setContactList, selectedChatData, selectedChatMessage])
 
   return (
-    <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[25vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">
+    <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[30vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">
       <div className="pt-3">
         <Logo />
       </div>

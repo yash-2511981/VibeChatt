@@ -7,6 +7,7 @@ import { useAppStore } from './store'
 import { apiClient } from './lib/api-client'
 import { GETUSER_INFO } from './utils/constants'
 import { CallUI } from './pages/calls/CallUi' // Import the CallUI component
+import Loading from './components/ui/Loading'
 
 
 const PrivateRoute = ({ children }) => {
@@ -48,7 +49,9 @@ function App() {
     }
   }, [userInfo, setUserInfo])
 
-  if (loading) return <div>Loading</div>
+  if (loading) return (
+    <div>loading</div>
+  )
 
   return (
 

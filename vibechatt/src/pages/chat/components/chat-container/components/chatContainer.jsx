@@ -9,6 +9,7 @@ import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getColor } from "@/lib/utils";
 import { BiCheck, BiCheckDouble } from "react-icons/bi";
+import MessageReciept from "@/components/ui/MessageReciept";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -141,11 +142,7 @@ const MessageContainer = () => {
                   <span>
                     {moment(message.timestamp).format("LT")}
                   </span>
-                  {message.sender === userInfo.id && <span className="ml-1">
-                    {message.status == "sent" && <BiCheck className="text-[13px]" />}
-                    {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
-                    {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
-                  </span>}
+                  {message.sender === userInfo.id && < MessageReciept status={message.status} />}
                 </div>
               </div>
             </div>
@@ -199,11 +196,7 @@ const MessageContainer = () => {
                       <span>
                         {moment(message.timestamp).format("LT")}
                       </span>
-                      {message.sender === userInfo.id && <span className="ml-1">
-                        {message.status == "sent" && <BiCheck className="text-[13px]" />}
-                        {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
-                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
-                      </span>}
+                      <MessageReciept message={message} />
                     </div>
                   </div>)
               }
@@ -289,8 +282,6 @@ const MessageContainer = () => {
                       </span>
                       {message.sender._id === userInfo.id && <span className="ml-1">
                         {message.status == "sent" && <BiCheck className="text-[13px]" />}
-                        {message.status == "recieved" && <BiCheckDouble className="text-[13px]" />}
-                        {message.status == "seen" && <BiCheckDouble className="text-[13px] text-[#34B7F1]" />}
                       </span>}
                     </div>
                   </div>)
@@ -322,7 +313,7 @@ const MessageContainer = () => {
     <div
       ref={containerRef}
       onScroll={handleScroll}
-      className="flex-1 overflow-y-auto custom-scrollbar p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[80vw] w-full"
+      className="flex-1 overflow-y-auto custom-scrollbar p-4 px-8 md:w-[65vw] lg:w-[70vw] xl:w-[70vw] w-full"
     >
       {renderMessages()}
       <div ref={scrollRef} />
