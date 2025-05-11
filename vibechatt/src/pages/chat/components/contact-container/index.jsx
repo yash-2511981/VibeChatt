@@ -11,7 +11,7 @@ import CreateChannels from "./components/createChannel"
 
 
 const ContactsContainer = () => {
-  const { setContactList, allContacts, channels, setChannel, selectedChatData, selectedChatMessage } = useAppStore();
+  const { setContactList, allContacts, channels, setChannel, selectedChatData, selectedChatMessage, addContactsInDmContacts } = useAppStore();
   const [listdisplay, setlistdisplay] = useState("contacts");
 
   useEffect(() => {
@@ -27,13 +27,14 @@ const ContactsContainer = () => {
       const response = await apiClient.get(GET_ALL_CHANNELS, { withCredentials: true })
 
       if (response.status === 200) {
+        console.log(response.data.channels)
         setChannel(response.data.channels)
       }
     };
     getChannels();
 
     getContacts();
-  }, [setChannel, setContactList, selectedChatData, selectedChatMessage])
+  }, [setChannel, setContactList, selectedChatData, selectedChatMessage, addContactsInDmContacts])
 
   return (
     <div className="relative md:w-[35vw] lg:w-[30vw] xl:w-[30vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">

@@ -7,7 +7,7 @@ import MessageReciept from "./MessageReciept";
 import moment from "moment";
 
 const ContactList = ({ contacts, isChannel = false }) => {
-    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo, selectedChatMessages } = useAppStore();
+    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
     const socket = useSocket();
 
     const handleClick = (contact) => {
@@ -65,8 +65,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                             <span className="absolute h-2 w-2 rounded-full bg-green-500" hidden={contact.status !== "online"}></span>
                                         </span>)
                                 }
-                                {
-                                    // selectedChatData && selectedChatData._id === contact._id ? (<span className="text-gray-500 text-xs">{selectedChatMessages[selectedChatMessages.length - 1].content}</span>) : (
+                                {contact.lastMessage !== null &&
                                     <div className="flex items-center justify-between">
                                         {
                                             contact.lastMessage.isOwnMessage && <MessageReciept status={contact.lastMessage.status} />
@@ -82,6 +81,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                     }
                                 </div>
                                 {
+                                    contact.lastMessage !== null &&
                                     <span className="text-gray-500 text-xs mt-1">
                                         {moment(contact.lastMessage.timestamp).format("LT")}
                                     </span>

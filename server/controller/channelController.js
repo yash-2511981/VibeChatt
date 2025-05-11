@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Channel from "../model/channelModel.js";
 import User from "../model/UserModel.js";
+import Message from "../model/MessageModel.js";
 
 export const createChannel = async (req, res) => {
     try {
@@ -40,20 +41,38 @@ export const createChannel = async (req, res) => {
 export const getAllChannels = async (req, res) => {
     try {
         const userId = new mongoose.Types.ObjectId(req.userId);
-        const channels = await Channel.find({
+        const data = await Channel.find({
             $or: [{ admin: userId }, { members: userId }],
         })
-        .sort({ updatedAt: -1 })
-        .populate("members","firstName lastName")
-        .populate("admin","firstName lastName")
+            .sort({ updatedAt: -1 })
+            .populate("members", "firstName lastName")
+            .populate("admin", "firstName lastName")
+            .populate({
+                path: "messages",
+                options: { sort: { timestamp: -1 }, limit: 1 },
+            })
 
+        const channels = data.map(channel => {
+            const ch = channel.toObject(); // 👈 this removes Mongoose internals
+            const lastMessage = ch.messages?.[0] || null;
 
+            return {
+                ...ch,
+                lastMessage: lastMessage
+                    ? {
+                        ...lastMessage,
+                        isOwnMessage: lastMessage.sender?.toString() === req.userId
+                    }
+                    : null
+            };
+        });
         return res.status(200).json({ channels });
     } catch (error) {
         console.log({ error });
         return res.status(500).send("Internal Server Error");
     }
 }
+
 
 
 export const getChannelMsg = async (req, res) => {
@@ -68,7 +87,7 @@ export const getChannelMsg = async (req, res) => {
             }
         })
 
-        if(!channel) return res.status(400).send("channel not found");
+        if (!channel) return res.status(400).send("channel not found");
 
         const messages = channel.messages;
         return res.status(200).json({ messages });
