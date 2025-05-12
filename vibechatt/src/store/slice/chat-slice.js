@@ -70,17 +70,30 @@ export const createChatSlice = (set, get) => ({
     },
     addContactsInDmContacts: (message) => {
         const userId = get().userInfo.id;
+        const selectId = get().selectedChatData._id
         const fromId = message.sender._id === userId ? message.reciever._id : message.sender._id;
         const fromData = message.sender._id === userId ? message.reciever : message.sender;
         const dmContacts = get().allContacts;
         const data = dmContacts.find((c) => c._id === fromId);
         const index = dmContacts.findIndex((c) => c._id === fromId);
 
+        const { sender, reciever, ...rest } = message
+        const lastMessage = {
+            ...rest,
+            isOwnMessage: sender._id === userId
+        }
+
         if (index !== -1 && index !== undefined) {
+            const unseenCount = selectId === fromId ? 0 : data.unseenCount + 1;
             dmContacts.splice(index, 1);
-            dmContacts.unshift(data);
+            dmContacts.unshift({ ...data, lastMessage, unseenCount });
         } else {
-            dmContacts.unshift(fromData);
+            const unseenCount = selectId === fromId ? 0 : 1;
+            dmContacts.unshift({
+                ...fromData,
+                lastMessage,
+                unseenCount,
+            });
         }
 
         set({ allContacts: dmContacts });
@@ -88,15 +101,52 @@ export const createChatSlice = (set, get) => ({
     updateContactStatus: (data) => {
         const contacts = get().allContacts;
         const index = contacts.findIndex((c) => c._id === data._id);
+        const userData = contacts.find((c) => c._id === data._id)
         if (index === -1) return;
 
-        contacts[index] = data;
+        contacts[index] = {
+            ...userData, ...data
+        };
 
         set({ allContacts: contacts });
 
         if (get().selectedChatData && get().selectedChatData._id === data._id) {
             set({ selectedChatData: data })
         }
-    }
+    },
+    updateContactList: (msg) => {
+        const { sender, reciever, ...rest } = msg;
+        const userId = get().userInfo.id;
+        const contactList = get().allContacts;
 
+        const contactInfo = sender._id === userId ? reciever : sender;
+        const index = contactList.findIndex((c) => c._id === contactInfo._id);
+
+        if (index !== -1) {
+            console.log(contactList[index])
+            const updatedContact = {
+                ...contactList[index],
+                lastMessage: {
+                    ...rest
+                },
+                unseenCount: contactList[index].unseenCount + 1,
+                lastMessageTime: rest.timestamp
+            };
+            contactList.splice(index, 1);
+            contactList.unshift(updatedContact);
+        } else {
+            const newContact = {
+                ...contactInfo,
+                lastMessage: {
+                    ...rest,
+                    isOwnMessage: userId === sender._id
+                },
+                lastMessageTime: rest.timestamp,
+                unseenCount: 1
+            };
+            contactList.unshift(newContact);
+        }
+
+        set({ allContacts: contactList });
+    }
 });

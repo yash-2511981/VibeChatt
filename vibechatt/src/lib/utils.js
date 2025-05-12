@@ -33,3 +33,10 @@ export const formatTime = (seconds) => {
   const secs = seconds % 60;
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
+
+
+//fuction for checking the message is image type or not
+export const checkImage = (filePath) => {
+  const imageRegex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/
+  return imageRegex.test(filePath);
+}

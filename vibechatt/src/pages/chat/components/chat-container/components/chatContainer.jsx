@@ -7,7 +7,7 @@ import { MdFolderZip } from 'react-icons/md'
 import { IoMdArrowRoundDown } from 'react-icons/io'
 import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getColor } from "@/lib/utils";
+import { checkImage, getColor } from "@/lib/utils";
 import { BiCheck, BiCheckDouble } from "react-icons/bi";
 import MessageReciept from "@/components/ui/MessageReciept";
 
@@ -99,11 +99,6 @@ const MessageContainer = () => {
     });
   };
 
-  //fuction for checking the message is image type or not
-  const checkImage = (filePath) => {
-    const imageRegex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/
-    return imageRegex.test(filePath);
-  }
 
   //this function for handling download file event
   const downloadFile = async (url) => {
@@ -133,12 +128,12 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 max-w-[50%] break-words`}>
-              <div className="flex items-center h-full">
-                <div className="mr-2 p-2">
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 max-w-[50%] min-w-[15%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
+              <div className="flex flex-col h-full">
+                <div className="w-full pr-4 pl-1 pt-1">
                   {message.content}
                 </div>
-                <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] mr-1 mb-1`}>
+                <div className={`text-[10px] text-gray-600 flex text-end justify-end items-center w-full pr-1 mb-1`}>
                   <span>
                     {moment(message.timestamp).format("LT")}
                   </span>
@@ -182,23 +177,27 @@ const MessageContainer = () => {
                     </div>
                   </div>)
                   :
-                  (<div className="flex items-center justify-center gap-3 mb-2 p-2 bg-black/20 rounded-lg relative">
-                    <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
-                    >
-                      <MdFolderZip />
-                    </span>
-                    <span>{message.fileUrl.split("/").pop()}</span>
-                    <span className="bg-black/20 p-3 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 md:text-2xl"
-                      onClick={() => downloadFile(message.fileUrl)}>
-                      <IoMdArrowRoundDown className="md:text-2xl" />
-                    </span>
-                    <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] bottom-[-14px] right-[-5px] absolute`}>
-                      <span>
-                        {moment(message.timestamp).format("LT")}
-                      </span>
-                      <MessageReciept message={message} />
+                  (
+                    <div>
+                      <div className="flex items-center justify-center gap-3 p-2 bg-black/20 rounded-lg">
+                        <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
+                        >
+                          <MdFolderZip />
+                        </span>
+                        <span>{message.fileUrl.split("/").pop()}</span>
+                        <span className="bg-black/20 p-3 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 md:text-2xl"
+                          onClick={() => downloadFile(message.fileUrl)}>
+                          <IoMdArrowRoundDown className="md:text-2xl" />
+                        </span>
+                      </div>
+                      <div className={`text-[10px] text-gray-600 flex items-center justify-end h-[15px]`}>
+                        <span>
+                          {moment(message.timestamp).format("LT")}
+                        </span>
+                        {message.sender === userInfo.id && <MessageReciept status={message.status} />}
+                      </div>
                     </div>
-                  </div>)
+                  )
               }
             </div>
           )
@@ -215,12 +214,12 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender._id === userInfo.id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 ml-10 max-w-[50%] break-words`}>
-              <div className="flex items-center">
-                <div className="mr-2 p-2">
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 ml-10 max-w-[50%] min-w-[15%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
+              <div className="flex flex-col h-full">
+                <div className="w-full pr-4 pl-1 pt-1">
                   {message.content}
                 </div>
-                <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] mr-1 mb-1`}>
+                <div className={`text-[10px] text-gray-600 flex text-end justify-end items-center w-full pr-1 mb-1`}>
                   <span>
                     {moment(message.timestamp).format("LT")}
                   </span>
@@ -266,17 +265,19 @@ const MessageContainer = () => {
                     </div>
                   </div>)
                   :
-                  (<div className="flex items-center justify-center gap-3 mb-2 p-2 bg-black/20 rounded-lg relative">
-                    <span className="text-white/8 text-sm bg-black/20 rounded-full p-3"
-                    >
-                      <MdFolderZip />
-                    </span>
-                    <span>{message.fileUrl.split("/").pop()}</span>
-                    <span className="bg-black/20 p-3 text-2xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300"
-                      onClick={() => downloadFile(message.fileUrl)}>
-                      <IoMdArrowRoundDown className="text-2xl" />
-                    </span>
-                    <div className={`text-[10px] text-gray-600 flex items-end justify-end h-[40px] bottom-[-14px] right-[-5px] absolute`}>
+                  (<div>
+                    <div className="flex items-center justify-center gap-3 p-2 bg-black/20 rounded-lg">
+                      <span className="text-white/8 text-sm bg-black/20 rounded-full p-3 ml-1"
+                      >
+                        <MdFolderZip />
+                      </span>
+                      <span>{message.fileUrl.split("/").pop()}</span>
+                      <span className="bg-black/20 p-3 text-xl rounded-full hover:bg-black/50 cursor-pointer transition-all duration-300 md:text-2xl"
+                        onClick={() => downloadFile(message.fileUrl)}>
+                        <IoMdArrowRoundDown className="md:text-2xl" />
+                      </span>
+                    </div>
+                    <div className={`text-[10px] text-gray-600 flex items-center justify-end h-[15px]`}>
                       <span>
                         {moment(message.timestamp).format("LT")}
                       </span>
@@ -304,7 +305,6 @@ const MessageContainer = () => {
           </div>
           )
         }
-
       </div>
     )
   }

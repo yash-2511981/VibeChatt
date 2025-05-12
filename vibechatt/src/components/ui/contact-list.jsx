@@ -1,10 +1,11 @@
 import { useAppStore } from "@/store"
 import { Avatar, AvatarImage } from "./avatar";
-import { getColor } from "@/lib/utils";
+import { checkImage, getColor } from "@/lib/utils";
 import { HOST } from "@/utils/constants";
 import { useSocket } from "@/context/SocketContext";
 import MessageReciept from "./MessageReciept";
 import moment from "moment";
+import { MdCameraAlt, MdFolder } from "react-icons/md";
 
 const ContactList = ({ contacts, isChannel = false }) => {
     const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
@@ -25,7 +26,6 @@ const ContactList = ({ contacts, isChannel = false }) => {
         if (selectedChatData && selectedChatData._id !== contact._id) {
             setSelectedChatMessage([])
         }
-
     }
 
     return (
@@ -37,7 +37,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                             {!isChannel &&
                                 (
                                     <>
-                                        <Avatar className='h-10 w-10 rounded-full overflow-hidden'>
+                                        <Avatar className='h-10 w-10 rounded-full overflow-hidden flex items-center justify-center'>
                                             {contact.image ?
                                                 (<AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                                                 (
@@ -70,7 +70,34 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                         {
                                             contact.lastMessage.isOwnMessage && <MessageReciept status={contact.lastMessage.status} />
                                         }
-                                        <span className="text-gray-500 text-xs">{`${contact.lastMessage.content.length < 40 ? contact.lastMessage.content : `${contact.lastMessage.content.slice(0, 40)} ...`}`}</span>
+                                        <span className="text-gray-500 text-xs flex items-center gap-1">
+                                            {(() => {
+                                                const isText = contact.lastMessage.messageType === "text";
+                                                const fileName = contact.lastMessage.fileUrl?.split("/").pop() || "";
+
+                                                const content = isText
+                                                    ? contact.lastMessage.content
+                                                    : fileName;
+
+                                                const truncated = content.length < 40 ? content : `${content.slice(0, 40)} ...`;
+
+                                                // Use your existing checkImage function
+                                                const icon = !isText
+                                                    ? checkImage(fileName)
+                                                        ? <MdCameraAlt className="text-lg" />
+                                                        : <MdFolder className="text-lg" />
+                                                    : null;
+
+                                                return (
+                                                    <>
+                                                        {truncated}
+                                                        {icon}
+                                                    </>
+                                                );
+                                            })()}
+                                        </span>
+
+
                                     </div>
                                 }
                             </div>

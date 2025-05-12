@@ -143,9 +143,6 @@ export const getContactsDmList = async (req, res, next) => {
                     email: "$contactInfo.email",
                     firstName: "$contactInfo.firstName",
                     lastName: "$contactInfo.lastName",
-                    fullName: {
-                        $concat: ["$contactInfo.firstName", " ", "$contactInfo.lastName"]
-                    },
                     image: "$contactInfo.image",
                     theme: "$contactInfo.theme",
                     status: "$contactInfo.status",
@@ -155,7 +152,8 @@ export const getContactsDmList = async (req, res, next) => {
                         content: "$lastMessage.content",
                         timestamp: "$lastMessage.timestamp",
                         status: "$lastMessage.status",
-                        type: "$lastMessage.type",
+                        messageType: "$lastMessage.messageType",
+                        fileUrl: "$lastMessage.fileUrl",
                         isOwnMessage: { $eq: ["$lastMessage.sender", userId] }
                     }
                 }

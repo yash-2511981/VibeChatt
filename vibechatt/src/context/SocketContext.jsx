@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage } = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage, updateContactList } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -28,18 +28,25 @@ export const SocketProvider = ({ children }) => {
                 const { selectedChatType, selectedChatData, addMessage, addContactsInDmContacts } = useAppStore.getState();
 
                 if (!selectedChatData || selectedChatType === undefined) {
-                    console.log("i am returning")
-                    return; // Exit early if no chat is selected
+                    updateContactList(msg);
+                    return;
                 }
 
-                // Check if the message belongs to the current chat
                 const isChatMember =
                     // Compare _id properties as they're the ones with values
                     (msg.sender && selectedChatData._id === msg.sender._id) ||
                     (msg.reciever && selectedChatData._id === msg.reciever._id);
 
                 if (isChatMember) {
+                    if (selectedChatData._id === msg.sender._id) {
+                        socket.current.emit("msg-seen", {
+                            messageId: msg._id,
+                            sender: msg.sender._id
+                        })
+                    }
                     addMessage(msg);
+                } else {
+                    updateContactList(msg)
                 }
                 addContactsInDmContacts(msg)
             });
@@ -74,15 +81,6 @@ export const SocketProvider = ({ children }) => {
 
             socket.current.on("contact-update", (data) => {
                 updateContactStatus(data);
-            })
-
-            socket.current.on("new-msg", (data) => {
-                const { selectedChatData } = useAppStore.getState();
-                const { sender } = data;
-
-                if (selectedChatData && selectedChatData._id === sender) {
-                    socket.current.emit("msg-seen", data)
-                }
             })
 
             socket.current.on("msg-seen", (data) => {

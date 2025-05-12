@@ -1,15 +1,16 @@
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { useSocket } from '@/context/SocketContext';
+import { getColor } from '@/lib/utils';
 import { useAppStore } from '@/store'
 import { HOST } from '@/utils/constants';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { IoCall, IoVideocam } from 'react-icons/io5';
-import { RiCloseFill } from 'react-icons/ri'
+import { RiCloseFill } from 'react-icons/ri';
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setFrom, setTo, setUser, setSelectedChatData } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setFrom, setTo, setUser } = useAppStore();
   const socket = useSocket();
   const [status, setstatus] = useState();
 
@@ -81,11 +82,11 @@ const ChatHeader = () => {
       <div className="flex gap-5 items-center ">
         {
           selectedChatType === "contact" ?
-            <Avatar className='h-12 w-12 rounded-full overflow-hidden'>
+            <Avatar className='h-12 w-12 rounded-full overflow-hidden flex items-center justify-center'>
               {selectedChatData.image ?
                 (<AvatarImage src={`${HOST}/${selectedChatData.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                 (
-                  <div className={`uppercase h-12 w-12   text text-5xl border-[1px] flex items-center justify-center rounded-full ${selectedChatData.theme}`}>
+                  <div className={`uppercase h-12 w-12 text-4xl border-[1px] flex items-center justify-center rounded-full ${getColor(selectedChatData.theme)}`}>
                     {selectedChatData.firstName ?
                       selectedChatData.firstName.split("").shift() :
                       selectedChatData.email.split("").shift()}
@@ -113,7 +114,7 @@ const ChatHeader = () => {
                   {selectedChatData.admin._id !== userInfo.id && `${selectedChatData.admin.firstName} ${selectedChatData.admin.lastName}, `}
                   {selectedChatData.members
                     .filter(member => userInfo.id !== member._id)
-                    .map((member, index,arr) => (
+                    .map((member, index, arr) => (
                       <span key={member._id}>
                         {`${member.firstName} ${member.lastName}${index < arr.length - 1 ? ',' : ''} `}
                       </span>

@@ -27,7 +27,6 @@ const ContactsContainer = () => {
       const response = await apiClient.get(GET_ALL_CHANNELS, { withCredentials: true })
 
       if (response.status === 200) {
-        console.log(response.data.channels)
         setChannel(response.data.channels)
       }
     };

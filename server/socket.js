@@ -27,7 +27,6 @@ const setupSocket = (server) => {
                     _id: updatedUser._id,
                     email: updatedUser.email,
                     theme: 0,
-                    profileSetup: true,
                     firstName: updatedUser.firstName,
                     lastName: updatedUser.lastName,
                     image: updatedUser.image,
@@ -64,14 +63,11 @@ const setupSocket = (server) => {
         const createdMessage = await Message.create(newMessage);
 
         const messageData = await Message.findById(createdMessage._id)
-            .populate("sender", "id email firstName lastName image theme")
-            .populate("reciever", "id email firstName lastName image theme ");
+            .populate("sender", "id email firstName lastName image theme lastActive status")
+            .populate("reciever", "id email firstName lastName image theme lastActive status");
 
         if (recieverSocketId) {
             io.to(recieverSocketId).emit("recieveMessage", messageData);
-        }
-        if (recieverSocketId) {
-            io.to(recieverSocketId).emit("new-msg", createdMessage);
         }
 
         if (senderSocketId) {
@@ -81,9 +77,9 @@ const setupSocket = (server) => {
     };
 
     const msgSeen = async (data) => {
-        const { _id, sender } = data;
+        const { messageId, sender } = data;
         const senderSocketId = userSocketMap.get(sender);
-        const msg = await Message.findByIdAndUpdate(_id, { status: "seen" }, { new: true })
+        const msg = await Message.findByIdAndUpdate(messageId, { status: "seen" }, { new: true })
         if (senderSocketId) {
             io.to(senderSocketId).emit("msg-seen", msg)
         }
@@ -126,7 +122,7 @@ const setupSocket = (server) => {
         });
 
         const messageData = await Message.findById(createMsg._id)
-            .populate("sender", "id email firstName lastName image theme")
+            .populate("sender", "id email firstName lastName image theme lastActive status")
             .exec();
 
         await Channel.findByIdAndUpdate(channelId, {
@@ -248,12 +244,15 @@ const setupSocket = (server) => {
 
         if (userId) {
             const updatedUser = await User.findByIdAndUpdate(userId, { status: "online" }, { new: true })
+            await Message.updateMany(
+                { reciever: userId, status: "sent" },
+                { $set: { status: "recieved" } }
+            )
             userSocketMap.set(userId, socket.id);
             socket.broadcast.emit("contact-update", {
                 _id: updatedUser._id,
                 email: updatedUser.email,
                 theme: 0,
-                profileSetup: true,
                 firstName: updatedUser.firstName,
                 lastName: updatedUser.lastName,
                 image: updatedUser.image,

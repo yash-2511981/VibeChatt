@@ -80,7 +80,7 @@ const NewDm = () => {
                                                 {contact.image ?
                                                     (<AvatarImage src={`${HOST}/${contact.image}`} alt="profile" className='object-cover w-full h-full bg-black' />) :
                                                     (
-                                                        <div className={`uppercase h-12 w-12   text text-5xl border-[1px] flex items-center justify-center rounded-full ${getColor(contact.theme)}`}>
+                                                        <div className={`uppercase h-12 w-12 text-5xl border-[1px] flex items-center justify-center rounded-full ${getColor(contact.theme)}`}>
                                                             {contact.firstName ?
                                                                 contact.firstName.split("").shift() :
                                                                 contact.email.split("").shift()}
