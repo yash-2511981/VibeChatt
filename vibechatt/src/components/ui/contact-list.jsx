@@ -79,7 +79,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                                     ? contact.lastMessage.content
                                                     : fileName;
 
-                                                const truncated = content.length < 40 ? content : `${content.slice(0, 40)} ...`;
+                                                const truncated = content.length < 20 ? content : `${content.slice(0, 20)} ...`;
 
                                                 // Use your existing checkImage function
                                                 const icon = !isText

@@ -45,10 +45,10 @@ export const SocketProvider = ({ children }) => {
                         })
                     }
                     addMessage(msg);
+                    addContactsInDmContacts(msg)
                 } else {
                     updateContactList(msg)
                 }
-                addContactsInDmContacts(msg)
             });
 
             socket.current.on("recieve-channel-message", (msg) => {
