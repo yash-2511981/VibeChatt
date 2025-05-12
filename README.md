@@ -9,7 +9,7 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 
 ## ✨ Features
 
-- **💬 Real-Time Messaging**
+- **💬 Real-Time Messaging**  
   Seamless instant messaging powered by **Socket.io**, supporting both **one-on-one** and **group chats**.
 
 - **📍 Message Receipts**  
@@ -19,7 +19,13 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
   Share images and files easily with real-time delivery tracking and status updates.
 
 - **📞 Video & Audio Calling**  
-  High-quality, real-time **video and audio call** functionality built using WebRTC.
+  High-quality, real-time **video and audio call** functionality built using **WebRTC**.
+
+- **👥 Dynamic Contact List Updates**  
+  The contact list updates in **real-time** as new messages arrive — even while chatting with others — showing latest messages and unseen message counts instantly.
+
+- **🟢 Real-Time User Presence**  
+  Instantly see who is **online** or **recently active** with live status updates for every contact.
 
 - **🔐 Secure Authentication**  
   User login and authentication handled via **JWT**, ensuring secure and persistent sessions.
