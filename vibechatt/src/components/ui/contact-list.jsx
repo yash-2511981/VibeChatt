@@ -8,13 +8,14 @@ import moment from "moment";
 import { MdCameraAlt, MdFolder } from "react-icons/md";
 
 const ContactList = ({ contacts, isChannel = false }) => {
-    const { setSelectedChatType, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
+    const { setSelectedChatType, updateChanelMsg, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
     const socket = useSocket();
 
     const handleClick = (contact) => {
         if (isChannel) {
             setSelectedChatType("channel")
             setSelectedChatData(contact);
+            updateChanelMsg(contact._id)
         } else {
             setSelectedChatType("contact")
             setSelectedChatData(contact);

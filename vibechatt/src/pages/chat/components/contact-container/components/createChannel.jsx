@@ -17,9 +17,8 @@ import { Button } from '@/components/ui/button';
 import MultipleSelector from '@/components/ui/multiselectComponent';
 
 const CreateChannels = () => {
-    const { setSelectedChatType, setSelectedChatData, addChannel, } = useAppStore();
+    const { addChannel, } = useAppStore();
     const [opneChannelModal, setOpenChannelModal] = useState(false)
-    const [searchedContact, setSearchedContact] = useState([]);
     const [allContacts, setAllContacts] = useState([]);
     const [selectedContacts, setSelectedContacts] = useState([])
     const [channelName, setChannelName] = useState("")
@@ -44,7 +43,7 @@ const CreateChannels = () => {
                 { name: channelName, members: selectedContacts.map((contact) => contact.value) },
                 { withCredentials: true }
             )
-            if(response.status === 200){
+            if (response.status === 200) {
                 setChannelName("");
                 setSelectedContacts([]);
                 setOpenChannelModal(false);

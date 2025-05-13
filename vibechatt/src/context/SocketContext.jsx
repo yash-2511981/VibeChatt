@@ -52,12 +52,14 @@ export const SocketProvider = ({ children }) => {
             });
 
             socket.current.on("recieve-channel-message", (msg) => {
-                const { selectedChatType, selectedChatData, addMessage, addChaannelInChannelList } = useAppStore.getState();
+                const { selectedChatType, selectedChatData, addMessage, addChaannelInChannelList, updateChannelList } = useAppStore.getState();
 
                 if (selectedChatType !== undefined && selectedChatData._id === msg.channelId) {
                     addMessage(msg)
+                    addChaannelInChannelList(msg)
+                } else {
+                    updateChannelList(msg);
                 }
-                addChaannelInChannelList(msg)
             })
 
 

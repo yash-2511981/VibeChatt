@@ -54,7 +54,7 @@ const MessageContainer = () => {
       if (selectedChatType === "channel") { getChannelMsg(); };
 
     }
-  }, [selectedChatType, selectedChatData, setSelectedChatMessage, updateMessageStatus, updateCurrentChatMessage]) // Removed
+  }, [selectedChatType, selectedChatData, updateMessageStatus, updateCurrentChatMessage]) // Removed
 
   // Handle scrolling when messages change
   useEffect(() => {

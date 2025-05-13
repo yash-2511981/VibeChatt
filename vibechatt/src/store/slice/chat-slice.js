@@ -49,18 +49,6 @@ export const createChatSlice = (set, get) => ({
 
         set({ selectedChatMessages: messages });
     },
-    addChaannelInChannelList: (message) => {
-        const channels = get().channels;
-        const data = channels.find((c) => c._id === message.channelId);
-        const index = channels.findIndex(
-            (c) => c._id === message.channelId
-        );
-
-        if (index !== -1 && index !== undefined) {
-            channels.splice(index, 1);
-            channels.unshift(data);
-        }
-    },
     updateCurrentChatMessage: () => {
         set(state => ({
             selectedChatMessages: state.selectedChatMessages.map(msg =>
@@ -148,5 +136,62 @@ export const createChatSlice = (set, get) => ({
         }
 
         set({ allContacts: contactList });
+    },
+    updateChannelList: (msg) => {
+        const userId = get().userInfo.id
+        const channelList = get().channels;
+        const { sender, channelId, ...rest } = msg
+        const index = channelList.findIndex((c) => c._id === channelId);
+
+        if (index !== -1) {
+            const updatedChannel = {
+                ...channelList[index],
+                unseenCount: channelList[index].unseenCount + 1,
+                lastMessage: {
+                    ...rest,
+                    isOwnMessage: sender._id === userId
+                },
+                lastMessageTime: rest.timestamp
+            }
+
+            channelList.splice(index, 1);
+            channelList.unshift(updatedChannel);
+            set({ channels: channelList })
+        }
+    },
+    addChaannelInChannelList: (message) => {
+        const userId = get().userInfo.id;
+        const channelList = get().channels;
+        const { sender, channelId, ...rest } = message
+        const index = channelList.findIndex(
+            (c) => c._id === channelId
+        );
+        const data = channelList.find((c) => c._id === channelId);
+
+        if (index !== -1) {
+            channelList.splice(index, 1);
+            const updatedChannel = {
+                ...data,
+                unseenCount: 0,
+                lastMessage: {
+                    ...rest,
+                    isOwnMessage: sender._id === userId
+                },
+                lastMessageTime: rest.timestamp
+            }
+            channelList.unshift(updatedChannel);
+            set({ channels: channelList })
+        }
+    },
+    updateChanelMsg: (id) => {
+        const channelList = get().channels;
+        const index = channelList.findIndex((c) => c._id === id);
+        const data = channelList[index];
+        channelList[index] = {
+            ...data,
+            unseenCount: 0
+        }
+
+        set({ channels: channelList });
     }
 });

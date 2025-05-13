@@ -6,36 +6,55 @@ import Message from "../model/MessageModel.js";
 export const createChannel = async (req, res) => {
     try {
         const { name, members } = req.body;
-
-        const userId = req.userId
+        const userId = req.userId;
 
         const admin = await User.findById(userId);
-
         if (!admin) {
-            return res.status(400).send("user not found");
+            return res.status(400).send("User not found");
         }
 
         const validMembers = await User.find({ _id: { $in: members } });
-
         if (validMembers.length !== members.length) {
-            return res.status(400).send("some members are not valid users")
+            return res.status(400).send("Some members are not valid users");
         }
+
         const newChannel = new Channel({
             name,
             members,
             admin: userId
-        })
+        });
 
         await newChannel.save();
 
-        res.status(200).json({
-            channel: newChannel
+        // Populate the required fields to match `getAllChannels` response format
+        await newChannel.populate("members", "firstName lastName");
+        await newChannel.populate("admin", "firstName lastName");
+        await newChannel.populate({
+            path: "messages",
+            options: { sort: { timestamp: -1 }, limit: 1 }
         });
+
+        const channelObj = newChannel.toObject();
+        const lastMessage = channelObj.messages?.[0] || null;
+
+        const formattedChannel = {
+            ...channelObj,
+            lastMessage: lastMessage
+                ? {
+                    ...lastMessage,
+                    isOwnMessage: lastMessage.sender?.toString() === req.userId
+                }
+                : null,
+            unseenCount: 0
+        };
+
+        res.status(200).json({ channel: formattedChannel });
     } catch (error) {
         console.log({ error });
         return res.status(500).send("Internal Server Error");
     }
-}
+};
+
 
 
 export const getAllChannels = async (req, res) => {
@@ -47,25 +66,39 @@ export const getAllChannels = async (req, res) => {
             .sort({ updatedAt: -1 })
             .populate("members", "firstName lastName")
             .populate("admin", "firstName lastName")
-            .populate({
-                path: "messages",
-                options: { sort: { timestamp: -1 }, limit: 1 },
+
+        const channels = await Promise.all(
+            data.map(async (channel) => {
+                const { messages, ...rest } = channel.toObject();
+
+                const lastMessage = await Message.findOne({ _id: { $in: channel.messages } })
+                    .sort({ timestamp: -1 });
+
+                return {
+                    ...rest,
+                    lastMessageTime: lastMessage?.timestamp ?? null,
+                    lastMessage: lastMessage
+                        ? {
+                            _id: lastMessage._id,
+                            sender: lastMessage.sender,
+                            messageType: lastMessage.messageType,
+                            content: lastMessage.content,
+                            fileUrl: lastMessage.fileUrl || null,
+                            timestamp: lastMessage.timestamp,
+                            isOwnMessage: lastMessage.sender?.toString() === req.userId,
+                        }
+                        : null,
+                    unseenCount: 0
+                };
             })
+        );
 
-        const channels = data.map(channel => {
-            const ch = channel.toObject(); // 👈 this removes Mongoose internals
-            const lastMessage = ch.messages?.[0] || null;
-
-            return {
-                ...ch,
-                lastMessage: lastMessage
-                    ? {
-                        ...lastMessage,
-                        isOwnMessage: lastMessage.sender?.toString() === req.userId
-                    }
-                    : null
-            };
+        channels.sort((a, b) => {
+            if (!a.lastMessageTime) return 1;
+            if (!b.lastMessageTime) return -1;
+            return new Date(b.lastMessageTime) - new Date(a.lastMessageTime);
         });
+
         return res.status(200).json({ channels });
     } catch (error) {
         console.log({ error });

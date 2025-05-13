@@ -23,6 +23,10 @@ const ContactsContainer = () => {
       }
     };
 
+    getContacts();
+  }, [setChannel, setContactList, selectedChatData, selectedChatMessage, addContactsInDmContacts])
+
+  useEffect(() => {
     const getChannels = async () => {
       const response = await apiClient.get(GET_ALL_CHANNELS, { withCredentials: true })
 
@@ -31,9 +35,7 @@ const ContactsContainer = () => {
       }
     };
     getChannels();
-
-    getContacts();
-  }, [setChannel, setContactList, selectedChatData, selectedChatMessage, addContactsInDmContacts])
+  }, [])
 
   return (
     <div className="relative md:w-[35vw] lg:w-[40vw] xl:w-[30vw] bg-[#1b1c24] border-r-2  border-[#2f303b] w-full">
