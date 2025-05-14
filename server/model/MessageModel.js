@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema({
     },
     messageType: {
         type: String,
-        enum: ["text", "file"],
+        enum: ["text", "file", "audio"],
         required: true
     },
     content: {
@@ -24,7 +24,7 @@ const messageSchema = new mongoose.Schema({
     fileUrl: {
         type: String,
         required: function () {
-            return this.messageType === "file"
+            return this.messageType === "file" || this.messageType === "audio"
         }
     },
     timestamp: {

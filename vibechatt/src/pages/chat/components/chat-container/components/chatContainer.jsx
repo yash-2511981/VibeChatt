@@ -202,7 +202,41 @@ const MessageContainer = () => {
             </div>
           )
         }
-
+        {
+          message.messageType === "audio" && (
+            <div className={`${message.sender !== selectedChatData._id
+              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2 p-1">
+                  <div className="flex-shrink-0">
+                    <button
+                      className="bg-black/20 p-2 rounded-full hover:bg-black/30 transition-all duration-300"
+                      onClick={() => downloadFile(message.fileUrl)}
+                    >
+                      <IoMdArrowRoundDown className="text-lg" />
+                    </button>
+                  </div>
+                  <div className="flex-grow">
+                    <audio
+                      controls
+                      className="max-w-full h-8"
+                      src={`${HOST}/${message.fileUrl}`}
+                    >
+                      Your browser does not support the audio element.
+                    </audio>
+                  </div>
+                </div>
+                <div className={`text-[10px] text-gray-600 flex items-center justify-end h-[15px] mt-1`}>
+                  <span>
+                    {moment(message.timestamp).format("LT")}
+                  </span>
+                  {message.sender === userInfo.id && <MessageReciept status={message.status} />}
+                </div>
+              </div>
+            </div>
+          )
+        }
       </div>
     )
   }
