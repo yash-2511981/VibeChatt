@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { checkImage, getColor } from "@/lib/utils";
 import { BiCheck, BiCheckDouble } from "react-icons/bi";
 import MessageReciept from "@/components/ui/MessageReciept";
+import AudioMessage from "@/components/ui/AudioMessage";
+import ChannelAudioMessage from "@/components/ChannelAudioMessage";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -204,37 +206,7 @@ const MessageContainer = () => {
         }
         {
           message.messageType === "audio" && (
-            <div className={`${message.sender !== selectedChatData._id
-              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words`}>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2 p-1">
-                  <div className="flex-shrink-0">
-                    <button
-                      className="bg-black/20 p-2 rounded-full hover:bg-black/30 transition-all duration-300"
-                      onClick={() => downloadFile(message.fileUrl)}
-                    >
-                      <IoMdArrowRoundDown className="text-lg" />
-                    </button>
-                  </div>
-                  <div className="flex-grow">
-                    <audio
-                      controls
-                      className="max-w-full h-8"
-                      src={`${HOST}/${message.fileUrl}`}
-                    >
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
-                </div>
-                <div className={`text-[10px] text-gray-600 flex items-center justify-end h-[15px] mt-1`}>
-                  <span>
-                    {moment(message.timestamp).format("LT")}
-                  </span>
-                  {message.sender === userInfo.id && <MessageReciept status={message.status} />}
-                </div>
-              </div>
-            </div>
+            <AudioMessage message={message} />
           )
         }
       </div>
@@ -326,39 +298,7 @@ const MessageContainer = () => {
         }
         {
           message.messageType === "audio" && (
-            <div className={`${message.sender._id === userInfo.id
-              ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 ml-10 max-w-[50%] break-words`}
-            >
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2 p-1">
-                  <div className="flex-shrink-0">
-                    <button
-                      className="bg-black/20 p-2 rounded-full hover:bg-black/30 transition-all duration-300"
-                      onClick={() => downloadFile(message.fileUrl)}
-                    >
-                      <IoMdArrowRoundDown className="text-lg" />
-                    </button>
-                  </div>
-                  <div className="flex-grow">
-                    <audio
-                      controls
-                      className="max-w-full h-8"
-                      src={`${HOST}/${message.fileUrl}`}
-                    >Your browser does not support the audio element.
-                    </audio>
-                  </div>
-                </div>
-                <div className={`text-[10px] text-gray-600 flex items-center justify-end h-[15px] mt-1`}>
-                  <span>
-                    {moment(message.timestamp).format("LT")}
-                  </span>
-                  {message.sender._id === userInfo.id && <span className="ml-1">
-                    {message.status == "sent" && <BiCheck className="text-[13px]" />}
-                  </span>}
-                </div>
-              </div>
-            </div>
+            <ChannelAudioMessage message={message} userInfo={userInfo} />
           )
         }
         {

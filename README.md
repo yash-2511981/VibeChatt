@@ -18,6 +18,9 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 - **🖼️ Media Sharing**  
   Share images and files easily with real-time delivery tracking and status updates.
 
+- **🔊 Audio Message Support**  
+  Send and receive **voice recordings** in both **individual** and **group chats**, with smooth real-time syncing and playback.
+
 - **📞 Video & Audio Calling**  
   High-quality, real-time **video and audio call** functionality built using **WebRTC**.
 
@@ -134,10 +137,6 @@ npm run dev
 npm install
 npm run dev
 ```
-
-### 🗺️ Features Incoming
-
-- sending audio recordings
 
 ---
 

@@ -6,6 +6,7 @@ import { useSocket } from "@/context/SocketContext";
 import MessageReciept from "./MessageReciept";
 import moment from "moment";
 import { MdCameraAlt, MdFolder } from "react-icons/md";
+import { IoMic } from "react-icons/io5";
 
 const ContactList = ({ contacts, isChannel = false }) => {
     const { setSelectedChatType, updateChanelMsg, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
@@ -74,6 +75,7 @@ const ContactList = ({ contacts, isChannel = false }) => {
                                         <span className="text-gray-500 text-xs flex items-center gap-1">
                                             {(() => {
                                                 const isText = contact.lastMessage.messageType === "text";
+                                                const isAudio = contact.lastMessage.messageType === "audio";
                                                 const fileName = contact.lastMessage.fileUrl?.split("/").pop() || "";
 
                                                 const content = isText
@@ -84,10 +86,10 @@ const ContactList = ({ contacts, isChannel = false }) => {
 
                                                 // Use your existing checkImage function
                                                 const icon = !isText
-                                                    ? checkImage(fileName)
+                                                    ? isAudio ? <IoMic className="text-lg" /> : checkImage(fileName)
                                                         ? <MdCameraAlt className="text-lg" />
-                                                        : <MdFolder className="text-lg" />
-                                                    : null;
+                                                        : <MdFolder className="text-lg" /> : null
+
 
                                                 return (
                                                     <>
