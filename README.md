@@ -138,6 +138,12 @@ npm install
 npm run dev
 ```
 
+### 🗺️ Features Incoming
+
+- updating status while other user is typing.
+- providing feature for message deletion and updation within particular time.
+- in app notification whenever new message arrive with contact name.
+
 ---
 
 ## 👨‍💻 Author
