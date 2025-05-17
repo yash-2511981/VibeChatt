@@ -8,6 +8,7 @@ import { GET_ALL_CHANNELS, GET_ALL_CONTACTS, GET_UNSEEN_MSG } from "@/utils/cons
 import { useAppStore } from "@/store"
 import ContactList from "@/components/ui/contact-list"
 import CreateChannels from "./components/createChannel"
+import { newMessageArrive } from "@/components/ui/NewNotification"
 
 
 const ContactsContainer = () => {
@@ -24,6 +25,7 @@ const ContactsContainer = () => {
     };
 
     getContacts();
+    console.log(allContacts)
   }, [setChannel, setContactList, selectedChatData, selectedChatMessage, addContactsInDmContacts])
 
   useEffect(() => {

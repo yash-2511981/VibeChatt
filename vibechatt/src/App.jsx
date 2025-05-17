@@ -7,7 +7,7 @@ import { useAppStore } from './store'
 import { apiClient } from './lib/api-client'
 import { GETUSER_INFO } from './utils/constants'
 import { CallUI } from './pages/calls/CallUi' // Import the CallUI component
-import Loading from './components/ui/Loading'
+import { newMessageArrive } from './components/ui/NewNotification'
 
 
 const PrivateRoute = ({ children }) => {
@@ -57,6 +57,7 @@ function App() {
 
     <BrowserRouter>
       {userInfo && <CallUI />}
+      {newMessageArrive()}
       <Routes>
         <Route path='/auth' element={
           <AuthRoute>

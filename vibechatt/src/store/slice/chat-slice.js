@@ -1,3 +1,6 @@
+import { newMessageArrive } from "@/components/ui/NewNotification";
+import { toast } from "sonner";
+
 export const createChatSlice = (set, get) => ({
     // Existing states
     calldetails: [],
@@ -136,6 +139,7 @@ export const createChatSlice = (set, get) => ({
         }
 
         set({ allContacts: contactList });
+        newMessageArrive(contactList.shift());
     },
     updateChannelList: (msg) => {
         const userId = get().userInfo.id

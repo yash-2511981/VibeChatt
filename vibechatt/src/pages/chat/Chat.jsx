@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import ContactsContainer from "./components/contact-container";
 import EmptyChatContainer from "./components/empty-chat-container";
 import ChatContainer from "./components/chat-container/chatcontainer";
+import { newMessageArrive } from "@/components/ui/NewNotification";
 
 const Chat = () => {
     const navigate = useNavigate();
