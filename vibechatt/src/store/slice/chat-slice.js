@@ -59,6 +59,13 @@ export const createChatSlice = (set, get) => ({
             )
         }))
     },
+    handleNotificationReply: (contact, type) => {
+        set({
+            selectedChatType: type,
+            selectedChatData: contact,
+            selectedChatMessages: []
+        })
+    },
     addContactsInDmContacts: (message) => {
         const userId = get().userInfo.id;
         const selectId = get().selectedChatData._id
@@ -140,7 +147,7 @@ export const createChatSlice = (set, get) => ({
         }
 
         set({ allContacts: contactList });
-        newMessageArrive(newMessage)
+        newMessageArrive(newMessage, get().handleNotificationReply)
     },
 
 

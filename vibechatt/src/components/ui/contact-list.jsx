@@ -10,7 +10,6 @@ import { IoMic } from "react-icons/io5";
 
 const ContactList = ({ contacts, isChannel = false }) => {
     const { setSelectedChatType, updateChanelMsg, setSelectedChatData, selectedChatData, setSelectedChatMessage, userInfo } = useAppStore();
-    const socket = useSocket();
 
     const handleClick = (contact) => {
         if (isChannel) {
@@ -20,10 +19,6 @@ const ContactList = ({ contacts, isChannel = false }) => {
         } else {
             setSelectedChatType("contact")
             setSelectedChatData(contact);
-            socket.emit("update-unseen-msg", {
-                user1: userInfo.id,
-                user2: contact._id
-            })
         }
         if (selectedChatData && selectedChatData._id !== contact._id) {
             setSelectedChatMessage([])

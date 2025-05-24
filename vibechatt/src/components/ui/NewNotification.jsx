@@ -1,32 +1,11 @@
+import { useSocket } from '@/context/SocketContext'
+import { useAppStore } from '@/store'
 import React from 'react'
 import { IoFolder, IoMic, IoNotifications, IoText } from 'react-icons/io5'
 import { MdMessage } from 'react-icons/md'
 import { toast } from 'sonner'
-// const contact = {
-//     email:
-//         "nihal@gmail.com",
-//     firstName:
-//         "Nihal",
-//     lastActive:
-//         "Tue May 13 2025 22:02:07 GMT+0530 (India Standard Time)",
-//     lastMessage:
-//         { timestamp: '2025-05-16T17:48:59.707Z', status: 'seen', messageType: 'audio', fileUrl: 'uploads/files/1747417739468/voice-message.wav', isOwnMessage: true },
-//     lastMessageTime:
-//         "2025-05-16T17:48:59.707Z",
-//     lastName:
-//         "Singh",
-//     status:
-//         "online",
-//     theme:
-//         2,
-//     unseenCount:
-//         4,
-//     _id:
-//         "6805f93381ca1bf6f4bb775c"
-// }
 
-export const newMessageArrive = (contact) => {
-    console.log(contact)
+export const newMessageArrive = (contact, onReply) => {
 
     const showMessage = (message) => {
         if (message.messageType === "audio") {
@@ -73,7 +52,10 @@ export const newMessageArrive = (contact) => {
                     </div>
                 </div>
 
-                <div className='ml-2 pl-2 cursor-pointer text-xs text-purple-400 hover:text-purple-300 font-medium border-l border-gray-600 h-6 flex items-center transition-colors duration-150'>
+                <div className='ml-2 pl-2 cursor-pointer text-xs text-purple-400 hover:text-purple-300 font-medium border-l border-gray-600 h-6 flex items-center transition-colors duration-150' onClick={() => {
+                    toast.dismiss(t.id);
+                    onReply(contact, "contact");
+                }}>
                     Reply
                 </div>
             </div>
