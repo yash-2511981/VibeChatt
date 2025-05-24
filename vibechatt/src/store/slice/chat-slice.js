@@ -112,9 +112,9 @@ export const createChatSlice = (set, get) => ({
 
         const contactInfo = sender._id === userId ? reciever : sender;
         const index = contactList.findIndex((c) => c._id === contactInfo._id);
+        let newMessage = null;
 
         if (index !== -1) {
-            console.log(contactList[index])
             const updatedContact = {
                 ...contactList[index],
                 lastMessage: {
@@ -125,6 +125,7 @@ export const createChatSlice = (set, get) => ({
             };
             contactList.splice(index, 1);
             contactList.unshift(updatedContact);
+            newMessage = updatedContact;
         } else {
             const newContact = {
                 ...contactInfo,
@@ -133,14 +134,16 @@ export const createChatSlice = (set, get) => ({
                     isOwnMessage: userId === sender._id
                 },
                 lastMessageTime: rest.timestamp,
-                unseenCount: 1
             };
-            contactList.unshift(newContact);
+            contactList.unshift(newContact)
+            newMessage = newContact;
         }
 
         set({ allContacts: contactList });
-        newMessageArrive(contactList.shift());
+        newMessageArrive(newMessage)
     },
+
+
     updateChannelList: (msg) => {
         const userId = get().userInfo.id
         const channelList = get().channels;
