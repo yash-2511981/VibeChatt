@@ -1,3 +1,4 @@
+import { channelMessageArrive } from "@/components/ui/NewChannelNotification";
 import { newMessageArrive } from "@/components/ui/NewNotification";
 import { toast } from "sonner";
 
@@ -149,8 +150,6 @@ export const createChatSlice = (set, get) => ({
         set({ allContacts: contactList });
         newMessageArrive(newMessage, get().handleNotificationReply)
     },
-
-
     updateChannelList: (msg) => {
         const userId = get().userInfo.id
         const channelList = get().channels;
@@ -171,6 +170,7 @@ export const createChatSlice = (set, get) => ({
             channelList.splice(index, 1);
             channelList.unshift(updatedChannel);
             set({ channels: channelList })
+            channelMessageArrive(updatedChannel, get().handleNotificationReply)
         }
     },
     addChaannelInChannelList: (message) => {

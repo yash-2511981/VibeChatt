@@ -1,9 +1,9 @@
 import React from 'react'
-import { IoFolder, IoMic, IoNotifications, IoText } from 'react-icons/io5'
+import { IoFolder, IoMic, IoNotifications } from 'react-icons/io5'
 import { MdMessage } from 'react-icons/md'
 import { toast } from 'sonner'
 
-export const newMessageArrive = (contact, onReply) => {
+export const channelMessageArrive = (channel, onReply) => {
 
     const showMessage = (message) => {
         if (message.messageType === "audio") {
@@ -35,24 +35,23 @@ export const newMessageArrive = (contact, onReply) => {
             <div className="bg-gray-800 text-gray-100 rounded-lg shadow-xl border border-gray-700 overflow-hidden w-60 flex items-center p-2">
                 <div className='relative'>
                     <IoNotifications className='text-3xl text-purple-400' />
-                    <span className='absolute top-[-3px] right-0 bg-purple-600 rounded-full h-4 w-4 flex items-center justify-center text-[10px] text-white font-medium'>{contact.unseenCount}</span>
+                    <span className='absolute top-[-3px] right-0 bg-purple-600 rounded-full h-4 w-4 flex items-center justify-center text-[10px] text-white font-medium'>{channel.unseenCount}</span>
                 </div>
 
                 <div className='ml-3 flex-1'>
                     <div className='text-Start'>
                         <div className='text-sm font-medium'>
-                            {contact?.firstName && contact?.lastName ?
-                                `${contact.firstName} ${contact.lastName}` : `${contact.email}`}
+                            {`# ${channel?.name}`}
                         </div>
                         <div className='text-xs flex items-center text-gray-300 mt-0.5'>
-                            {showMessage(contact.lastMessage)}
+                            {showMessage(channel.lastMessage)}
                         </div>
                     </div>
                 </div>
 
                 <div className='ml-2 pl-2 cursor-pointer text-xs text-purple-400 hover:text-purple-300 font-medium border-l border-gray-600 h-6 flex items-center transition-colors duration-150' onClick={() => {
                     toast.dismiss(t.id);
-                    onReply(contact, "contact");
+                    onReply(channel, "channel");
                 }}>
                     Reply
                 </div>

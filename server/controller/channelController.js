@@ -72,7 +72,7 @@ export const getAllChannels = async (req, res) => {
                 const { messages, ...rest } = channel.toObject();
 
                 const lastMessage = await Message.findOne({ _id: { $in: channel.messages } })
-                    .sort({ timestamp: -1 });
+                    .sort({ timestamp: -1 }).populate("sender", "firstName lastName");
 
                 return {
                     ...rest,

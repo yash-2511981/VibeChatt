@@ -34,6 +34,7 @@ const ContactsContainer = () => {
 
       if (response.status === 200) {
         setChannel(response.data.channels)
+        console.log(response.data.channels)
       }
     };
     getChannels();

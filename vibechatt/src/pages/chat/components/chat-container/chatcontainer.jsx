@@ -6,14 +6,16 @@ import { useSocket } from "@/context/SocketContext"
 import { useAppStore } from "@/store"
 
 const ChatContainer = () => {
-  const { userInfo, selectedChatData } = useAppStore();
+  const { userInfo, selectedChatData, selectedChatType } = useAppStore();
   const socket = useSocket();
 
   useEffect(() => {
-    socket.emit("update-unseen-msg", {
-      user1: userInfo.id,
-      user2: selectedChatData._id
-    })
+    if (selectedChatType === "contact") {
+      socket.emit("update-unseen-msg", {
+        user1: userInfo.id,
+        user2: selectedChatData._id
+      })
+    }
   }, [])
 
   return (

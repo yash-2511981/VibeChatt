@@ -128,7 +128,7 @@ const AudioMessage = ({ message }) => {
     return (
         <div className={`${message.sender !== selectedChatData._id
             ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50"
-            : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 lg:w-[30%] md:[40%] sm:w-[50%] break-words`}>
+            : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block p-2 rounded my-1 max-w-[50%] break-words transition-all duration-300`}>
             <audio
                 ref={audioRef}
                 preload='metadata'
