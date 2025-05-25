@@ -24,6 +24,9 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 - **📞 Video & Audio Calling**  
   High-quality, real-time **video and audio call** functionality built using **WebRTC**.
 
+- **🔔 In-App Notifications**  
+  Real-time pop-up notifications displaying **username**, **unseen message count**, and **last message preview**, with a quick **Reply** button for instant responses.
+
 - **👥 Dynamic Contact List Updates**  
   The contact list updates in **real-time** as new messages arrive — even while chatting with others — showing latest messages and unseen message counts instantly.
 
@@ -142,7 +145,6 @@ npm run dev
 
 - updating status while other user is typing.
 - providing feature for message deletion and updation within particular time.
-- in app notification whenever new message arrive with contact name.
 
 ---
 
