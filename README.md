@@ -27,6 +27,9 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 - **🔔 In-App Notifications**  
   Real-time pop-up notifications displaying **username**, **unseen message count**, and **last message preview**, with a quick **Reply** button for instant responses.
 
+- **✍️ Typing Indicator**  
+  Instantly see when another user is **typing**, with dynamic status updates in both **one-on-one** and **group chats**.
+
 - **👥 Dynamic Contact List Updates**  
   The contact list updates in **real-time** as new messages arrive — even while chatting with others — showing latest messages and unseen message counts instantly.
 
@@ -143,7 +146,6 @@ npm run dev
 
 ### 🗺️ Features Incoming
 
-- updating status while other user is typing.
 - providing feature for message deletion and updation within particular time.
 
 ---
