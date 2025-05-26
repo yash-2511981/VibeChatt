@@ -1,6 +1,6 @@
+import { useDebounce } from "@/components/ui/multiselectComponent";
 import { useSocket } from "@/context/SocketContext";
 import { apiClient } from "@/lib/api-client";
-import { debounce } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { SEND_FILE_MSG } from "@/utils/constants";
 import EmojiPicker from "emoji-picker-react";
@@ -36,9 +36,9 @@ const MessageBar = () => {
         }
     }, [isTyping, socket, selectedChatData._id, userInfo.id])
 
-    const debounceTyping = useCallback(debounce(stopTyping, 3000), [stopTyping]);
+    const debounceStopTyping = useDebounce(stopTyping, 3000);
 
-    const handleTyping = () => {
+    const handleTyping = useCallback(() => {
         if (!isTyping) {
             setIsTyping(true);
             socket.emit("status-changed", {
@@ -47,8 +47,8 @@ const MessageBar = () => {
                 status: "Typing"
             })
         }
-        debounceTyping()
-    }
+        debounceStopTyping()
+    }, [isTyping, socket, selectedChatData._id, userInfo.id, debounceStopTyping])
 
     useEffect(() => {
         function handleClickedOutside(event) {
