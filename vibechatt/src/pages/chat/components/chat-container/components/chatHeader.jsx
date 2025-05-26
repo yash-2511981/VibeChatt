@@ -6,11 +6,11 @@ import { HOST } from '@/utils/constants';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { IoCall, IoVideocam } from 'react-icons/io5';
-import { RiCloseFill } from 'react-icons/ri';
+import { RiCloseFill, RiXingLine } from 'react-icons/ri';
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType, setCallType, setcallUIState, userInfo, setFrom, setTo, setUser } = useAppStore();
+  const { closeChat, selectedChatData, updateTypingStatus, selectedChatType, setCallType, setcallUIState, userInfo, setFrom, setTo, setUser } = useAppStore();
   const socket = useSocket();
   const [status, setstatus] = useState();
 
@@ -65,9 +65,11 @@ const ChatHeader = () => {
 
   useEffect(() => {
     const handleStatusChange = () => {
-      if (selectedChatData.status === "online") {
+      if (selectedChatData.status === "online" || selectedChatData.status === "Typing") {
+        console.log("online")
         setstatus(selectedChatData.status)
       } else {
+        console.log("")
         const lastActive = formatLastActive(selectedChatData.lastActive);
         setstatus(lastActive)
       }
@@ -107,7 +109,7 @@ const ChatHeader = () => {
             {
               selectedChatType === "contact" ? (
                 <span className='text-neutral-500'>
-                  {status}
+                  {status === "Typing" ? `${status}....` : `${status}`}
                 </span>
               ) : (
                 <div className='text-neutral-500'>

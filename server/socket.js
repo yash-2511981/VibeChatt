@@ -239,6 +239,16 @@ const setupSocket = (server) => {
         }
     }
 
+    const handleStatusChange = ({ to, from, status }) => {
+        const tosocketId = userSocketMap.get(to);
+        if (tosocketId) {
+            io.to(tosocketId).emit("status-changed", {
+                from,
+                status
+            })
+        }
+    }
+
     io.on("connection", async (socket) => {
         const userId = socket.handshake.query.userId;
 
@@ -287,6 +297,7 @@ const setupSocket = (server) => {
 
         socket.on("msg-seen", msgSeen);
         socket.on("update-unseen-msg", updateUnseenMessages);
+        socket.on("status-changed", handleStatusChange);
     });
 };
 

@@ -40,3 +40,13 @@ export const checkImage = (filePath) => {
   const imageRegex = /\.(jpg|jpeg|png|gif|bmp|tiff|tif|webp|svg|ico|heic|heif)$/
   return imageRegex.test(filePath);
 }
+
+
+export const debounce = (func, delay) => {
+  let timeoutId;
+
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  }
+}

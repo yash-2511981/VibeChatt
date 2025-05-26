@@ -1,9 +1,10 @@
 import { useSocket } from "@/context/SocketContext";
 import { apiClient } from "@/lib/api-client";
+import { debounce } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { SEND_FILE_MSG } from "@/utils/constants";
 import EmojiPicker from "emoji-picker-react";
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { GrAttachment } from 'react-icons/gr'
 import { IoMic, IoSend, IoStop } from "react-icons/io5";
 import { RiEmojiStickerLine } from "react-icons/ri";
@@ -16,12 +17,38 @@ const MessageBar = () => {
     const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading } = useAppStore()
     const [message, setMessage] = useState("");
     const [openEmojiPicker, setEmojiPicker] = useState(false)
+    const [isTyping, setIsTyping] = useState(false);
 
     //states for audio recording
     const [isRecording, setisRecording] = useState(false);
-    const [audioBlob, setaudioBlob] = useState();
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
+
+
+    const stopTyping = useCallback(() => {
+        if (isTyping) {
+            setIsTyping(false)
+            socket.emit('status-changed', {
+                to: selectedChatData._id,
+                from: userInfo.id,
+                status: "online"
+            })
+        }
+    }, [isTyping, socket, selectedChatData._id, userInfo.id])
+
+    const debounceTyping = useCallback(debounce(stopTyping, 3000), [stopTyping]);
+
+    const handleTyping = () => {
+        if (!isTyping) {
+            setIsTyping(true);
+            socket.emit("status-changed", {
+                to: selectedChatData._id,
+                from: userInfo.id,
+                status: "Typing"
+            })
+        }
+        debounceTyping()
+    }
 
     useEffect(() => {
         function handleClickedOutside(event) {
@@ -208,7 +235,12 @@ const MessageBar = () => {
     return (
         <div className="h-[10vh] bg-[#1c1d25] flex justify-center items-center px-8 mb-6 gap-6" >
             <div className="flex-1 flex bg-[#2a2b33] rounded-md items-center gap-5 pr-5">
-                <input type="text" className="flex-1 p-5 bg-transperent rounded-md focus:border-none focus:outline-none " placeholder="Type message" value={message} onChange={(e) => setMessage(e.target.value)} disabled={isRecording} />
+                <input type="text" className="flex-1 p-5 bg-transperent rounded-md focus:border-none focus:outline-none " placeholder="Type message" value={message}
+                    onChange={(e) => {
+                        setMessage(e.target.value);
+                        if (!isRecording) handleTyping();
+                    }}
+                    disabled={isRecording} />
                 <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' onClick={attachmentClick}>
                     <GrAttachment className="text-2xl" />
                 </button>

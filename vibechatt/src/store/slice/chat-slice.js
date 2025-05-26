@@ -113,6 +113,17 @@ export const createChatSlice = (set, get) => ({
             set({ selectedChatData: data })
         }
     },
+    updateTypingStatus: (data) => {
+        const { from, status } = data
+        let currentChat = get().selectedChatData;
+        const isChatOpen = currentChat._id === from;
+        if (isChatOpen) {
+            currentChat = {
+                ...currentChat, status
+            }
+            set({ selectedChatData: currentChat })
+        }
+    },
     updateContactList: (msg) => {
         const { sender, reciever, ...rest } = msg;
         const userId = get().userInfo.id;

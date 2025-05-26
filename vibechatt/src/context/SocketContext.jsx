@@ -11,7 +11,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage, updateContactList } = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage, updateContactList, updateTypingStatus } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -63,7 +63,7 @@ export const SocketProvider = ({ children }) => {
             })
 
 
-            socket.current.on('incomingCall', async (data) => {
+            socket.current.on('incomingCall', (data) => {
                 const { to, from, type, } = data;
                 setCallType(type)
                 setFrom(from);
@@ -83,6 +83,10 @@ export const SocketProvider = ({ children }) => {
 
             socket.current.on("contact-update", (data) => {
                 updateContactStatus(data);
+            })
+
+            socket.current.on("status-changed", (data) => {
+                updateTypingStatus(data);
             })
 
             socket.current.on("msg-seen", (data) => {
