@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Message from "../model/MessageModel.js";
 import { mkdirSync, renameSync } from 'fs'
 
@@ -17,7 +16,18 @@ export const getMessages = async (req, res) => {
             ],
         }).sort({ timestamp: 1 })
 
-        return res.status(200).json({ messages })
+        const now = Date.now();
+        const EDIT_WINDOW = 3 * 60 * 1000;
+
+        const msgWithEditFlag = messages.map((msg) => {
+            if (msg.sender.toString() === user1.toString()) {
+                const canEdit = now - msg.timestamp.getTime() < EDIT_WINDOW;
+                return { ...msg.toObject(), canEdit }
+            }
+            return msg.toObject();
+        })
+
+        return res.status(200).json({ messages: msgWithEditFlag })
     } catch (error) {
         console.log(error.message);
         return res.status(500).send("Internal Server Error");

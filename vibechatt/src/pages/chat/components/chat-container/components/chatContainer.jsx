@@ -3,7 +3,7 @@ import { useAppStore } from "@/store"
 import { GET_CHANNEEL_MSG, GET_CHAT_MESSAGES, HOST } from "@/utils/constants";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react"
-import { MdFolderZip } from 'react-icons/md'
+import { MdEdit, MdFolderZip } from 'react-icons/md'
 import { IoMdArrowRoundDown } from 'react-icons/io'
 import { RiCloseFill } from "react-icons/ri";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ import { BiCheck, BiCheckDouble } from "react-icons/bi";
 import MessageReciept from "@/components/ui/MessageReciept";
 import AudioMessage from "@/components/ui/AudioMessage";
 import ChannelAudioMessage from "@/components/ChannelAudioMessage";
+import EditAndDeleteMessage from "@/components/ui/EditAndDeleteMessage";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
@@ -82,7 +83,6 @@ const MessageContainer = () => {
       const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
       const showDate = messageDate !== lastDate;
       lastDate = messageDate;
-
       return (
         <div key={index}>
           {showDate && (
@@ -130,7 +130,7 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender !== selectedChatData._id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 max-w-[50%] min-w-[20%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} relative border inline-block rounded my-1 max-w-[50%] min-w-[20%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
               <div className="flex flex-col h-full">
                 <div className="w-full pr-4 pl-1 pt-1">
                   {message.content}
@@ -141,6 +141,9 @@ const MessageContainer = () => {
                   </span>
                   {message.sender === userInfo.id && < MessageReciept status={message.status} />}
                 </div>
+              </div>
+              <div className="absolute top-0 right-[-20px] h-full">
+                {message?.canEdit && <EditAndDeleteMessage />}
               </div>
             </div>
           )
