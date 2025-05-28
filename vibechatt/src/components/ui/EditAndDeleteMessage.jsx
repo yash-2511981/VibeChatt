@@ -1,3 +1,4 @@
+import { useAppStore } from '@/store';
 import { useState } from 'react';
 import { MdDelete } from "react-icons/md";
 import { RiEditBoxLine } from "react-icons/ri";
@@ -75,12 +76,14 @@ export const DeleteMessage = ({ message, onDelete }) => {
 };
 
 // Combined Edit and Delete Component - For text messages
-export const EditAndDeleteMessage = ({ message, onEdit, onDelete }) => {
+export const EditAndDeleteMessage = ({ message }) => {
     const [showConfirm, setShowConfirm] = useState(false);
+    const { setIsMsgEditng, setEditMessage } = useAppStore();
 
     const handleEdit = (e) => {
         e.stopPropagation();
-        onEdit && onEdit(message);
+        setIsMsgEditng();
+        setEditMessage(message);
     };
 
     const handleDelete = (e) => {
