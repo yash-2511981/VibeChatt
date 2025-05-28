@@ -1,6 +1,5 @@
 import { channelMessageArrive } from "@/components/ui/NewChannelNotification";
 import { newMessageArrive } from "@/components/ui/NewNotification";
-import { toast } from "sonner";
 
 export const createChatSlice = (set, get) => ({
     // Existing states
@@ -14,7 +13,26 @@ export const createChatSlice = (set, get) => ({
     fileUploadProgress: 0,
     fileDownloadProgress: 0,
     channels: [],
-
+    isMsgEditing: false,
+    setIsMsgEditng: () => {
+        const value = get().isMsgEditing
+        set({ isMsgEditing: !value })
+    },
+    editMessage: null,
+    setEditMessage: (value) => {
+        set({ editMessage: value });
+    },
+    updateSelectedChatMsg: (msg) => {
+        const isChatOpen = get().selectedChatData._id === msg.sender._id
+        if (isChatOpen) {
+            let messages = get().selectedChatMessages;
+            const idx = messages.findIndex(m => m._id === msg._id);
+            if (idx !== -1) {
+                messages[idx].content = msg.content;
+                set({ selectedChatMessages: messages })
+            }
+        }
+    },
     // Existing methods
     setChannel: (channels) => set({ channels }),
     addChannel: (channel) => {

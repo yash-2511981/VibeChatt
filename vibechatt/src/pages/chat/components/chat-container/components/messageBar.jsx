@@ -14,7 +14,7 @@ const MessageBar = () => {
     const emojiRef = useRef();
     const fileInputRef = useRef();
     const socket = useSocket();
-    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading } = useAppStore()
+    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading, isMsgEditing, editMessage } = useAppStore()
     const [message, setMessage] = useState("");
     const [openEmojiPicker, setEmojiPicker] = useState(false)
     const [isTyping, setIsTyping] = useState(false);
@@ -23,6 +23,13 @@ const MessageBar = () => {
     const [isRecording, setisRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
+
+    //handle the states for editing message
+    useEffect(() => {
+        if (isMsgEditing) {
+            setMessage(editMessage.content);
+        }
+    }, [isMsgEditing])
 
 
     const stopTyping = useCallback(() => {
@@ -71,21 +78,32 @@ const MessageBar = () => {
         }
 
         if (selectedChatType === "contact") {
-            socket.emit("sendMessage", {
-                sender: userInfo.id,
-                content: message,
-                reciever: selectedChatData._id,
-                messageType: "text",
-                fileUrl: undefined
-            });
+            if (!isMsgEditing) {
+                socket.emit("sendMessage", {
+                    sender: userInfo.id,
+                    content: message,
+                    reciever: selectedChatData._id,
+                    messageType: "text",
+                    fileUrl: undefined
+                })
+            } else {
+                socket.emit("editMessage", {
+                    ...editMessage,
+                    content: message
+                })
+            }
         } else if (selectedChatType === "channel") {
-            socket.emit("send-channel-msg", {
-                sender: userInfo.id,
-                content: message,
-                messageType: "text",
-                fileUrl: undefined,
-                channelId: selectedChatData._id
-            })
+            if (!isMsgEditing) {
+                socket.emit("send-channel-msg", {
+                    sender: userInfo.id,
+                    content: message,
+                    messageType: "text",
+                    fileUrl: undefined,
+                    channelId: selectedChatData._id
+                })
+            } else {
+                socket.emit("editMessage")
+            }
         }
 
         setMessage("")
