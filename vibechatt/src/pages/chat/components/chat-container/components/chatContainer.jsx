@@ -12,13 +12,23 @@ import { BiCheck, BiCheckDouble } from "react-icons/bi";
 import MessageReciept from "@/components/ui/MessageReciept";
 import AudioMessage from "@/components/ui/AudioMessage";
 import ChannelAudioMessage from "@/components/ChannelAudioMessage";
-import EditAndDeleteMessage from "@/components/ui/EditAndDeleteMessage";
+import { EditAndDeleteMessage } from "@/components/ui/EditAndDeleteMessage";
 
 const MessageContainer = () => {
   const scrollRef = useRef();
   const containerRef = useRef();
   const [isManualScrolling, setIsManualScrolling] = useState(false);
-  const { userInfo, selectedChatType, selectedChatData, selectedChatMessages, setSelectedChatMessage, setDownloadProgress, setIsDownloading, updateMessageStatus, updateCurrentChatMessage } = useAppStore()
+  const {
+    userInfo,
+    selectedChatType,
+    selectedChatData,
+    selectedChatMessages,
+    setSelectedChatMessage,
+    setDownloadProgress,
+    setIsDownloading,
+    updateMessageStatus,
+    updateCurrentChatMessage
+  } = useAppStore()
 
   //states to manage the image click and download
   const [showImage, setShowImage] = useState(undefined);
@@ -143,7 +153,7 @@ const MessageContainer = () => {
                 </div>
               </div>
               <div className="absolute top-0 right-[-20px] h-full">
-                {message?.canEdit && <EditAndDeleteMessage />}
+                {message?.canEdit && <EditAndDeleteMessage message={message} />}
               </div>
             </div>
           )

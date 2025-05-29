@@ -78,12 +78,13 @@ export const DeleteMessage = ({ message, onDelete }) => {
 // Combined Edit and Delete Component - For text messages
 export const EditAndDeleteMessage = ({ message }) => {
     const [showConfirm, setShowConfirm] = useState(false);
-    const { setIsMsgEditng, setEditMessage } = useAppStore();
+    const { setIsMsgEditng, setEditMessage, setMessage } = useAppStore();
 
     const handleEdit = (e) => {
         e.stopPropagation();
-        setIsMsgEditng();
+        setIsMsgEditng(true);
         setEditMessage(message);
+        setMessage(message.content)
     };
 
     const handleDelete = (e) => {

@@ -14,8 +14,7 @@ const MessageBar = () => {
     const emojiRef = useRef();
     const fileInputRef = useRef();
     const socket = useSocket();
-    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading, isMsgEditing, editMessage } = useAppStore()
-    const [message, setMessage] = useState("");
+    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading, isMsgEditing, editMessage, message, setMessage, setIsMsgEditng, setEditMessage } = useAppStore()
     const [openEmojiPicker, setEmojiPicker] = useState(false)
     const [isTyping, setIsTyping] = useState(false);
 
@@ -23,14 +22,6 @@ const MessageBar = () => {
     const [isRecording, setisRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
-
-    //handle the states for editing message
-    useEffect(() => {
-        if (isMsgEditing) {
-            setMessage(editMessage.content);
-        }
-    }, [isMsgEditing])
-
 
     const stopTyping = useCallback(() => {
         if (isTyping) {
@@ -54,7 +45,9 @@ const MessageBar = () => {
                 status: "Typing"
             })
         }
-        debounceStopTyping()
+        if (debounceStopTyping && typeof debounceStopTyping === 'function') {
+            debounceStopTyping();
+        }
     }, [isTyping, socket, selectedChatData._id, userInfo.id, debounceStopTyping])
 
     useEffect(() => {
@@ -87,8 +80,10 @@ const MessageBar = () => {
                     fileUrl: undefined
                 })
             } else {
-                socket.emit("editMessage", {
-                    ...editMessage,
+                socket.emit("sendEditedMsg", {
+                    from: userInfo.id,
+                    to: editMessage.reciever,
+                    messageId: editMessage._id,
                     content: message
                 })
             }
@@ -107,6 +102,8 @@ const MessageBar = () => {
         }
 
         setMessage("")
+        setIsMsgEditng(false);
+        setEditMessage(null);
     }
 
     const handleAddEmoji = (emoji) => {
@@ -274,7 +271,7 @@ const MessageBar = () => {
             </div>
             <button className='bg-[#8417ff] rounded-md flex items-center justify-center p-5 hover:bg-[#741bda] focus:bg-[#741bda] focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
                 onClick={handleButtonClick}>
-                {isRecording ? <IoStop className="text-2xl" /> : message.length === 0 ? <IoMic className="text-2xl" /> : <IoSend className="text-2xl" />}
+                {isRecording ? <IoStop className="text-2xl" /> : message?.length === 0 ? <IoMic className="text-2xl" /> : <IoSend className="text-2xl" />}
             </button>
         </div>
     )

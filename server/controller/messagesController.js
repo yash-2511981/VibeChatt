@@ -17,7 +17,7 @@ export const getMessages = async (req, res) => {
         }).sort({ timestamp: 1 })
 
         const now = Date.now();
-        const EDIT_WINDOW = 3 * 60 * 1000;
+        const EDIT_WINDOW = 24 * 60 * 60 * 1000;
 
         const msgWithEditFlag = messages.map((msg) => {
             if (msg.sender.toString() === user1.toString()) {
