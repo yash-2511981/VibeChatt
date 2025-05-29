@@ -2,6 +2,7 @@ import { useAppStore } from '@/store'
 import { HOST } from '@/utils/constants'
 import { createContext, useContext, useEffect, useRef } from 'react'
 import { io } from 'socket.io-client'
+import { toast } from 'sonner'
 
 const SocketContext = createContext(null)
 
@@ -11,7 +12,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
     const socket = useRef();
-    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage, updateContactList, updateTypingStatus } = useAppStore();
+    const { userInfo, setFrom, setTo, setcallUIState, endCall, setCallStatus, setCallType, setUser, updateContactStatus, updateMessageStatus, updateCurrentChatMessage, updateContactList, updateTypingStatus, updateMessageInMessagesList } = useAppStore();
 
     useEffect(() => {
         if (userInfo) {
@@ -62,6 +63,14 @@ export const SocketProvider = ({ children }) => {
                 }
             })
 
+            socket.current.on("recievedEditMsg", ({ chatId, messageId, content }) => {
+                const { selectedChatData } = useAppStore.getState();
+
+                if (selectedChatData._id === chatId) {
+                    updateMessageInMessagesList(messageId, content);
+                }
+            })
+
 
             socket.current.on('incomingCall', (data) => {
                 const { to, from, type, } = data;
@@ -103,6 +112,10 @@ export const SocketProvider = ({ children }) => {
                 if (selectedChatData && selectedChatData._id === id) {
                     updateCurrentChatMessage()
                 }
+            })
+
+            socket.current.on("error", ({ message }) => {
+                toast.error(message)
             })
 
             return () => {
