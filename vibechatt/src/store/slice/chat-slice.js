@@ -13,14 +13,17 @@ export const createChatSlice = (set, get) => ({
     fileUploadProgress: 0,
     fileDownloadProgress: 0,
     channels: [],
+    message: "",
+    setMessage: (value) => {
+        set({ message: value })
+    },
     isMsgEditing: false,
-    setIsMsgEditng: () => {
-        const value = get().isMsgEditing
-        set({ isMsgEditing: !value })
+    setIsMsgEditng: (value) => {
+        set({ isMsgEditing: value })
     },
     editMessage: null,
     setEditMessage: (value) => {
-        set({ editMessage: value });
+        set({ editMessage: value })
     },
     updateSelectedChatMsg: (msg) => {
         const isChatOpen = get().selectedChatData._id === msg.sender._id
@@ -31,6 +34,15 @@ export const createChatSlice = (set, get) => ({
                 messages[idx].content = msg.content;
                 set({ selectedChatMessages: messages })
             }
+        }
+    },
+    updateMessageInMessagesList: (id, content) => {
+        const messages = get().selectedChatMessages
+        const index = messages.findIndex((m) => m._id === id)
+
+        if (index !== -1) {
+            messages[index].content = content;
+            set({ selectedChatMessages: messages });
         }
     },
     // Existing methods
