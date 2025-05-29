@@ -149,6 +149,28 @@ const setupSocket = (server) => {
         }
     };
 
+    const sendEditedMessage = async (data) => {
+        const { from, to, messageId, content } = data;
+        const fromSocketId = userSocketMap.get(from);
+        const toSocketId = userSocketMap.get(to);
+        const now = Date.now();
+        const EDIT_WINDOW = 24 * 60 * 60 * 1000;
+
+        let message = await Message.findById(messageId);
+
+        const canEdit = now - message.timestamp.getTime() < EDIT_WINDOW
+
+        if (canEdit) {
+            await Message.findByIdAndUpdate(messageId, { $set: { content } })
+            if (fromSocketId) io.to(fromSocketId).emit("recievedEditMsg", { chatId: to, messageId, content });
+            if (fromSocketId) io.to(toSocketId).emit("recievedEditMsg", { chatId: from, messageId, content });
+        } else {
+            if (fromSocketId) {
+                io.to(fromSocketId).emit("error", { message: "message cant be edited" })
+            }
+        }
+    }
+
     const outGoingCall = async (data) => {
         const { from, to } = data;
         const calleesocketId = userSocketMap.get(to.id);
@@ -273,6 +295,7 @@ const setupSocket = (server) => {
 
         socket.on("sendMessage", sendMessage);
         socket.on("send-channel-msg", sendChannelMsg);
+        socket.on("sendEditedMsg", sendEditedMessage);
         socket.on("disconnect", (u) => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
