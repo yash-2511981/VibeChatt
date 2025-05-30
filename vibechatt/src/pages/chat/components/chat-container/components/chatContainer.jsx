@@ -233,7 +233,7 @@ const MessageContainer = () => {
           message.messageType === "text" && (
             <div className={`${message.sender._id === userInfo.id
               ? "bg-[#8417ff]/5 text-[#8427ff]/90 border-[#8417ff]/50 text-left"
-              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} border inline-block rounded my-1 ml-10 max-w-[50%] min-w-[15%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
+              : "bg-[#2a2b33]/5 text-white/90 border-[#ffffff]/20"} relative border inline-block rounded my-1 ml-10 max-w-[50%] min-w-[15%] xl:min-w-[10%] lg:min-w-[15%] break-words px-1`}>
               <div className="flex flex-col h-full">
                 <div className="w-full pr-4 pl-1 pt-1">
                   {message.content}
@@ -246,6 +246,9 @@ const MessageContainer = () => {
                     {message.status == "sent" && <BiCheck className="text-[13px]" />}
                   </span>}
                 </div>
+              </div>
+              <div className="absolute top-0 right-[-20px] h-full">
+                {message?.canEdit && <EditAndDeleteMessage message={message} />}
               </div>
             </div>
           )

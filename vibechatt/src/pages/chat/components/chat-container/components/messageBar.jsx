@@ -97,7 +97,12 @@ const MessageBar = () => {
                     channelId: selectedChatData._id
                 })
             } else {
-                socket.emit("editMessage")
+                socket.emit("sendEditedChannelMsg", {
+                    from: userInfo.id,
+                    to: selectedChatData._id,
+                    messageId: editMessage._id,
+                    content: message
+                })
             }
         }
 
