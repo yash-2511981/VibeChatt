@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
             })
 
             socket.current.on("recieveMessage", (msg) => {
-                const { selectedChatType, selectedChatData, addMessage, addContactsInDmContacts } = useAppStore.getState();
+                const { selectedChatType, selectedChatData, addMessage, addContactsInDmContacts, userInfo } = useAppStore.getState();
 
                 if (!selectedChatData || selectedChatType === undefined) {
                     updateContactList(msg);
@@ -53,7 +53,8 @@ export const SocketProvider = ({ children }) => {
             });
 
             socket.current.on("recieve-channel-message", (msg) => {
-                const { selectedChatType, selectedChatData, addMessage, addChaannelInChannelList, updateChannelList } = useAppStore.getState();
+                const { selectedChatType, selectedChatData, addMessage, addChaannelInChannelList, updateChannelList, userInfo } = useAppStore.getState();
+                if (msg.sender === userInfo.id) msg = { ...msg, canEdit: true }
 
                 if (selectedChatType !== undefined && selectedChatData._id === msg.channelId) {
                     addMessage(msg)
