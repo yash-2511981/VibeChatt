@@ -36,6 +36,7 @@ export const createChatSlice = (set, get) => ({
             }
         }
     },
+    //function to update the edited message content in messages array if open
     updateMessageInMessagesList: (id, content) => {
         const messages = get().selectedChatMessages
         const index = messages.findIndex((m) => m._id === id)
@@ -69,7 +70,8 @@ export const createChatSlice = (set, get) => ({
                 ...selectedChatMessages, {
                     ...msg,
                     reciever: selectedChatType === "channel" ? msg.reciever : msg.reciever._id,
-                    sender: selectedChatType === "channel" ? msg.sender : msg.sender._id
+                    sender: selectedChatType === "channel" ? msg.sender : msg.sender._id,
+                    canEdit: true
                 }
             ]
         });
