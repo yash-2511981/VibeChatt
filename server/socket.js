@@ -149,12 +149,13 @@ const setupSocket = (server) => {
         }
     };
 
+    //functions for edited messages in individual chat
     const sendEditedMessage = async (data) => {
         const { from, to, messageId, content } = data;
         const fromSocketId = userSocketMap.get(from);
         const toSocketId = userSocketMap.get(to);
         const now = Date.now();
-        const EDIT_WINDOW = 24 * 60 * 60 * 1000;
+        const EDIT_WINDOW = 3 * 60 * 1000;
 
         let message = await Message.findById(messageId);
 
@@ -163,13 +164,46 @@ const setupSocket = (server) => {
         if (canEdit) {
             await Message.findByIdAndUpdate(messageId, { $set: { content } })
             if (fromSocketId) io.to(fromSocketId).emit("recievedEditMsg", { chatId: to, messageId, content });
-            if (fromSocketId) io.to(toSocketId).emit("recievedEditMsg", { chatId: from, messageId, content });
+            if (toSocketId) io.to(toSocketId).emit("recievedEditMsg", { chatId: from, messageId, content });
         } else {
             if (fromSocketId) {
                 io.to(fromSocketId).emit("error", { message: "message cant be edited" })
             }
         }
     }
+
+    //functions for edited messages in group chats
+    const sendEditedMessageToChannel = async (data) => {
+        const { from, to, messageId, content } = data;
+        const now = Date.now();
+        const EDIT_WINDOW = 3 * 60 * 1000;
+
+        let message = await Message.findById(messageId);
+
+        const canEdit = now - message.timestamp.getTime() < EDIT_WINDOW
+        if (canEdit) {
+            const channel = await Channel.findById(to).populate("members");
+            if (channel && channel.members) {
+                channel.members.forEach((member) => {
+                    const memberSocketId = userSocketMap.get(member._id.toString());
+
+                    if (memberSocketId) {
+                        io.to(memberSocketId).emit("recievedEditMsg", { chatId: to, messageId, content });
+                    }
+                });
+
+                const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+                if (adminSocketId) {
+                    io.to(adminSocketId).emit("recievedEditMsg", { chatId: to, messageId, content });
+                }
+            }
+        } else {
+            const fromSocketId = userSocketMap.get(from);
+            if (fromSocketId) {
+                io.to(fromSocketId).emit("error", { message: "message cant be edited" })
+            }
+        }
+    };
 
     const outGoingCall = async (data) => {
         const { from, to } = data;
@@ -296,6 +330,7 @@ const setupSocket = (server) => {
         socket.on("sendMessage", sendMessage);
         socket.on("send-channel-msg", sendChannelMsg);
         socket.on("sendEditedMsg", sendEditedMessage);
+        socket.on("sendEditedChannelMsg", sendEditedMessageToChannel);
         socket.on("disconnect", (u) => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);

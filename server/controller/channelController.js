@@ -111,6 +111,7 @@ export const getAllChannels = async (req, res) => {
 export const getChannelMsg = async (req, res) => {
     try {
         const { channelId } = req.params;
+        const userId = req.userId
 
         const channel = await Channel.findById(channelId).populate({
             path: "messages",
@@ -121,8 +122,16 @@ export const getChannelMsg = async (req, res) => {
         })
 
         if (!channel) return res.status(400).send("channel not found");
+        const now = Date.now();
+        const EDIT_WINDOW = 3 * 60 * 1000;
 
-        const messages = channel.messages;
+        const messages = channel.messages.map((msg) => {
+            if (msg.sender._id.toString() === userId.toString()) {
+                const canEdit = now - msg.timestamp.getTime() < EDIT_WINDOW;
+                return { ...msg.toObject(), canEdit }
+            }
+            return msg.toObject();
+        })
         return res.status(200).json({ messages });
     } catch (error) {
         console.log({ error });
