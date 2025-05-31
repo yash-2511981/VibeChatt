@@ -205,6 +205,18 @@ const setupSocket = (server) => {
         }
     };
 
+    //handle delete message
+    const deleteMessage = async (data) => {
+        const { msgId, to, from } = data;
+        const toSocketId = userSocketMap.get(to);
+        const fromSocketId = userSocketMap.get(from);
+
+        await Message.findByIdAndDelete(msgId);
+
+        if (toSocketId) io.to(toSocketId).emit("deleteMsg", { chatId: from, id: msgId });
+        if (fromSocketId) io.to(fromSocketId).emit("deleteMsg", { chatId: to, id: msgId });
+    }
+
     const outGoingCall = async (data) => {
         const { from, to } = data;
         const calleesocketId = userSocketMap.get(to.id);
@@ -331,6 +343,7 @@ const setupSocket = (server) => {
         socket.on("send-channel-msg", sendChannelMsg);
         socket.on("sendEditedMsg", sendEditedMessage);
         socket.on("sendEditedChannelMsg", sendEditedMessageToChannel);
+        socket.on("deleteMessage", deleteMessage);
         socket.on("disconnect", (u) => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
