@@ -79,7 +79,7 @@ export const DeleteMessage = ({ message, onDelete }) => {
 // Combined Edit and Delete Component - For text messages
 export const EditAndDeleteMessage = ({ message }) => {
     const [showConfirm, setShowConfirm] = useState(false);
-    const { setIsMsgEditng, setEditMessage, setMessage } = useAppStore();
+    const { setIsMsgEditng, setEditMessage, setMessage, selectedChatData, userInfo, selectedChatType } = useAppStore();
     const socket = useSocket();
 
     const handleEdit = (e) => {
@@ -92,9 +92,18 @@ export const EditAndDeleteMessage = ({ message }) => {
     const handleDelete = (e) => {
         e.stopPropagation();
         if (showConfirm) {
-            socket.emit("deleteMessage", {
-
-            })
+            if (selectedChatType === "contact") {
+                socket.emit("deleteMessage", {
+                    msgId: message._id,
+                    to: selectedChatData._id,
+                    from: userInfo.id
+                })
+            } else {
+                socket.emit("deleteChannelMessage", {
+                    msgId: message._id,
+                    channelId: selectedChatData._id,
+                })
+            }
             setShowConfirm(false);
         } else {
             setShowConfirm(true);
