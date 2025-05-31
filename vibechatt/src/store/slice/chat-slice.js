@@ -46,6 +46,11 @@ export const createChatSlice = (set, get) => ({
             set({ selectedChatMessages: messages });
         }
     },
+    deleteMessageFromChat: (id) => {
+        console.log(id)
+        const messages = get().selectedChatMessages;
+        set({ selectedChatMessages: messages.filter(msg => msg._id !== id) });
+    },
     // Existing methods
     setChannel: (channels) => set({ channels }),
     addChannel: (channel) => {
@@ -65,15 +70,14 @@ export const createChatSlice = (set, get) => ({
         const selectedChatMessages = get().selectedChatMessages;
         const selectedChatType = get().selectedChatType;
 
+        const newMessage = {
+            ...msg,
+            reciever: selectedChatType === "channel" ? msg.reciever : msg.reciever._id,
+            sender: selectedChatType === "channel" ? msg.sender : msg.sender._id,
+        };
+
         set({
-            selectedChatMessages: [
-                ...selectedChatMessages, {
-                    ...msg,
-                    reciever: selectedChatType === "channel" ? msg.reciever : msg.reciever._id,
-                    sender: selectedChatType === "channel" ? msg.sender : msg.sender._id,
-                    canEdit: true
-                }
-            ]
+            selectedChatMessages: [...selectedChatMessages, newMessage]
         });
     },
     updateMessageStatus: (message) => {
@@ -81,7 +85,11 @@ export const createChatSlice = (set, get) => ({
         const index = get().selectedChatMessages.findIndex(msg => msg._id === message._id);
         const messages = get().selectedChatMessages;
 
-        messages[index] = message;
+        const newMessage = {
+            ...messages[index],
+            ...message
+        }
+        messages[index] = newMessage;
 
         set({ selectedChatMessages: messages });
     },
@@ -148,7 +156,7 @@ export const createChatSlice = (set, get) => ({
     updateTypingStatus: (data) => {
         const { from, status } = data
         let currentChat = get().selectedChatData;
-        const isChatOpen = currentChat._id === from;
+        const isChatOpen = currentChat?._id === from;
         if (isChatOpen) {
             currentChat = {
                 ...currentChat, status
