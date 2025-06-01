@@ -14,14 +14,25 @@ const MessageBar = () => {
     const emojiRef = useRef();
     const fileInputRef = useRef();
     const socket = useSocket();
-    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading, isMsgEditing, editMessage, message, setMessage, setIsMsgEditng, setEditMessage } = useAppStore()
+    const { selectedChatType, selectedChatData, userInfo, setUploadProgress, setIsUploading, isMsgEditing, editMessage, setIsMsgEditng, setEditMessage } = useAppStore()
     const [openEmojiPicker, setEmojiPicker] = useState(false)
     const [isTyping, setIsTyping] = useState(false);
+    const [message, setMessage] = useState("");
 
     //states for audio recording
     const [isRecording, setisRecording] = useState(false);
+    const [audioBlob, setaudioBlob] = useState();
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
+
+    useEffect(() => {
+        if (isMsgEditing && editMessage && editMessage.content) {
+            setMessage(editMessage.content);
+        } else if (!isMsgEditing) {
+            // Clear message when not editing (optional)
+            setMessage("");
+        }
+    }, [isMsgEditing, editMessage]);
 
     const stopTyping = useCallback(() => {
         if (isTyping) {
