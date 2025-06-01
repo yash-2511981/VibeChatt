@@ -45,6 +45,9 @@ Built with a powerful tech stack including **React, Node.js, Express, MongoDB, S
 - **📱 Fully Responsive UI**  
   Built with **Tailwind CSS** for a sleek, modern, and fully responsive design across all devices.
 
+- **✏️ Edit & Delete Messages**  
+  Allows users to **edit** or **delete** their messages within a specific time window, maintaining clarity and control in conversations.
+
 ---
 
 ## 🛠 Tech Stack
@@ -143,12 +146,6 @@ npm run dev
 npm install
 npm run dev
 ```
-
-### 🗺️ Features Incoming
-
-- providing feature for message deletion and updation within particular time.
-
----
 
 ## 👨‍💻 Author
 
