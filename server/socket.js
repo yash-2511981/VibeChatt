@@ -210,11 +210,61 @@ const setupSocket = (server) => {
         const { msgId, to, from } = data;
         const toSocketId = userSocketMap.get(to);
         const fromSocketId = userSocketMap.get(from);
+        const now = Date.now();
+        const EDIT_WINDOW = 60 * 1000;
 
-        await Message.findByIdAndDelete(msgId);
+        let message = await Message.findById(msgId);
 
-        if (toSocketId) io.to(toSocketId).emit("deleteMsg", { chatId: from, id: msgId });
-        if (fromSocketId) io.to(fromSocketId).emit("deleteMsg", { chatId: to, id: msgId });
+        const canEdit = now - message.timestamp.getTime() < EDIT_WINDOW;
+
+        if (canEdit) {
+            await Message.findByIdAndDelete(msgId);
+
+            if (toSocketId) io.to(toSocketId).emit("deleteMsg", { chatId: from, id: msgId });
+            if (fromSocketId) io.to(fromSocketId).emit("deleteMsg", { chatId: to, id: msgId });
+        } else {
+            const fromSocketId = userSocketMap.get(from);
+            if (fromSocketId) {
+                io.to(fromSocketId).emit("error", { message: "message cant be deleted" })
+            }
+        }
+    }
+
+    //delete message function for channels messages
+    const deleteChannelMessage = async (data) => {
+        const { msgId, to, from } = data;
+        console.log(data)
+        const now = Date.now();
+        const EDIT_WINDOW = 60 * 1000;
+
+        let message = await Message.findById(msgId);
+
+        const canEdit = now - message.timestamp.getTime() < EDIT_WINDOW;
+
+        if (canEdit) {
+            await Message.findByIdAndDelete(msgId);
+
+            const channel = await Channel.findById(to).populate("members");
+            if (channel && channel.members) {
+                channel.members.forEach((member) => {
+                    const memberSocketId = userSocketMap.get(member._id.toString());
+
+                    if (memberSocketId) {
+                        io.to(memberSocketId).emit("deleteMsg", { chatId: to, id: msgId });
+                    }
+                });
+
+                const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+                if (adminSocketId) {
+                    io.to(adminSocketId).emit("deleteMsg", { chatId: to, id: msgId });
+                }
+            }
+        } else {
+            const fromSocketId = userSocketMap.get(from);
+            if (fromSocketId) {
+                io.to(fromSocketId).emit("error", { message: "message cant be deleted" })
+            }
+        }
     }
 
     const outGoingCall = async (data) => {
@@ -344,6 +394,7 @@ const setupSocket = (server) => {
         socket.on("sendEditedMsg", sendEditedMessage);
         socket.on("sendEditedChannelMsg", sendEditedMessageToChannel);
         socket.on("deleteMessage", deleteMessage);
+        socket.on("deleteChannelMessage", deleteChannelMessage)
         socket.on("disconnect", (u) => disconnect(socket));
 
         socket.on("outgoingCall", outGoingCall);
