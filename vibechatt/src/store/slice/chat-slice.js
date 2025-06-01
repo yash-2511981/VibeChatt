@@ -13,10 +13,6 @@ export const createChatSlice = (set, get) => ({
     fileUploadProgress: 0,
     fileDownloadProgress: 0,
     channels: [],
-    message: "",
-    setMessage: (value) => {
-        set({ message: value })
-    },
     isMsgEditing: false,
     setIsMsgEditng: (value) => {
         set({ isMsgEditing: value })
