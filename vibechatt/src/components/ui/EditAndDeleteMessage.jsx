@@ -101,10 +101,13 @@ export const EditAndDeleteMessage = ({ message }) => {
             } else {
                 socket.emit("deleteChannelMessage", {
                     msgId: message._id,
-                    channelId: selectedChatData._id,
+                    to: selectedChatData._id,
+                    from: userInfo.id
                 })
             }
             setShowConfirm(false);
+            setEditMessage(null)
+            setIsMsgEditng(false)
         } else {
             setShowConfirm(true);
             setTimeout(() => setShowConfirm(false), 3000);
